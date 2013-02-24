@@ -6,7 +6,8 @@ import sbtrelease.ReleasePlugin._
 object ShapelessContribBuild extends Build {
 
   val shapelessVersion = "1.2.4"
-
+  val scalazVersion = "7.0.0-M8"
+  val scalacheckVersion = "1.10.0"
 
   lazy val standardSettings = Defaults.defaultSettings ++ releaseSettings ++ Seq(
     organization := "org.typelevel",
@@ -65,6 +66,37 @@ object ShapelessContribBuild extends Build {
     base = file("."),
     settings = standardSettings ++ Seq(
       publishArtifact := false
+    ),
+    aggregate = Seq(scalacheck, scalaz)
+  )
+
+  lazy val scalacheck = Project(
+    id = "scalacheck",
+    base = file("scalacheck"),
+    settings = standardSettings ++ Seq(
+      name := "shapeless-scalacheck",
+      libraryDependencies ++= Seq(
+        "org.scalaz" %% "scalaz-core" % scalazVersion,
+        "org.scalacheck" %% "scalacheck" % scalacheckVersion,
+        "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion
+      )
+    )
+  )
+
+  lazy val scalaz = Project(
+    id = "scalaz",
+    base = file("scalaz"),
+    dependencies = Seq(scalacheck % "test"),
+    settings = standardSettings ++ Seq(
+      name := "shapeless-scalaz",
+      libraryDependencies ++= Seq(
+        "org.scalaz" %% "scalaz-core" % scalazVersion,
+
+        "org.specs2" %% "specs2" % "1.12.3" % "test",
+        "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
+        "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
+        "org.typelevel" %% "scalaz-specs2" % "0.1.1" % "test"
+      )
     )
   )
 
