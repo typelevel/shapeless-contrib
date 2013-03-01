@@ -67,7 +67,7 @@ object ShapelessContribBuild extends Build {
     settings = standardSettings ++ Seq(
       publishArtifact := false
     ),
-    aggregate = Seq(common, scalacheck, scalaz)
+    aggregate = Seq(common, scalacheck, scalaz, spire)
   )
 
   lazy val common = Project(
@@ -104,6 +104,22 @@ object ShapelessContribBuild extends Build {
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
         "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
         "org.typelevel" %% "scalaz-specs2" % "0.1.1" % "test"
+      )
+    )
+  )
+
+  lazy val spire = Project(
+    id = "spire",
+    base = file("spire"),
+    dependencies = Seq(common, scalacheck % "test"),
+    settings = standardSettings ++ Seq(
+      name := "shapeless-spire",
+      libraryDependencies ++= Seq(
+        "org.spire-math" %% "spire" % "0.3.0",
+
+        "org.scalatest" %% "scalatest" % "1.9.1",
+        "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
+        "org.spire-math" %% "spire-scalacheck-binding" % "0.3.0" % "test"
       )
     )
   )
