@@ -1,8 +1,9 @@
 package shapeless.contrib.scalaz
 
-import shapeless._
-
 import scalaz._
+
+import shapeless._
+import shapeless.contrib._
 
 trait TypeClasses {
 
@@ -16,13 +17,6 @@ trait TypeClasses {
 
 
   // Products
-
-  private trait Product[+C[_], F, T <: HList] {
-    def F: C[F]
-    def T: C[T]
-
-    type λ = F :: T
-  }
 
   private trait ProductSemigroup[F, T <: HList]
     extends Semigroup[F :: T]
@@ -53,11 +47,6 @@ trait TypeClasses {
 
 
   // Isos
-
-  private trait Isomorphic[+C[_], A, B] {
-    def B: C[B]
-    def iso: Iso[A, B]
-  }
 
   private trait IsomorphicSemigroup[A, B]
     extends Semigroup[A]

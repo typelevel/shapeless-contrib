@@ -67,7 +67,15 @@ object ShapelessContribBuild extends Build {
     settings = standardSettings ++ Seq(
       publishArtifact := false
     ),
-    aggregate = Seq(scalacheck, scalaz)
+    aggregate = Seq(common, scalacheck, scalaz)
+  )
+
+  lazy val common = Project(
+    id = "common",
+    base = file("common"),
+    settings = standardSettings ++ Seq(
+      name := "shapeless-contrib-common"
+    )
   )
 
   lazy val scalacheck = Project(
@@ -86,7 +94,7 @@ object ShapelessContribBuild extends Build {
   lazy val scalaz = Project(
     id = "scalaz",
     base = file("scalaz"),
-    dependencies = Seq(scalacheck % "test"),
+    dependencies = Seq(common, scalacheck % "test"),
     settings = standardSettings ++ Seq(
       name := "shapeless-scalaz",
       libraryDependencies ++= Seq(
