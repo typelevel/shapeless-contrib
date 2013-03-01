@@ -8,13 +8,16 @@ import shapeless.contrib._
 trait TypeClasses {
 
   private trait Empty {
-    def emptyProduct = new Monoid[HNil] with Equal[HNil] {
+
+    def emptyProduct = new Monoid[HNil] with Order[HNil] with Show[HNil] {
       def zero = HNil
       def append(f1: HNil, f2: => HNil) = HNil
-      def equal(a1: HNil, a2: HNil) = true
+      override def equal(a1: HNil, a2: HNil) = true
+      def order(x: HNil, y: HNil) = Monoid[Ordering].zero
+      override def shows(f: HNil) = "HNil"
     }
-  }
 
+  }
 
   // Products
 
@@ -45,6 +48,31 @@ trait TypeClasses {
 
   }
 
+  private trait ProductOrder[F, T <: HList]
+    extends ProductEqual[F, T]
+    with Order[F :: T]
+    with Product[Order, F, T] {
+
+    override def equal(a1: λ, a2: λ) =
+      super[ProductEqual].equal(a1, a2)
+
+    def order(x: λ, y: λ) =
+      Semigroup[Ordering].append(F.order(x.head, y.head), T.order(x.tail, y.tail))
+
+  }
+
+  private trait ProductShow[F, T <: HList]
+    extends Show[F :: T]
+    with Product[Show, F, T] {
+
+    override def shows(f: λ) =
+      F.shows(f.head) ++ " :: " ++ T.shows(f.tail)
+
+    override def show(f: λ) =
+      F.show(f.head) ++ Cord(" :: ") ++ T.show(f.tail)
+
+  }
+
 
   // Isos
 
@@ -52,7 +80,7 @@ trait TypeClasses {
     extends Semigroup[A]
     with Isomorphic[Semigroup, A, B] {
 
-    def append(f1: A, f2: => A): A =
+    def append(f1: A, f2: => A) =
       iso.from(B.append(iso.to(f1), iso.to(f2)))
 
   }
@@ -62,7 +90,7 @@ trait TypeClasses {
     with Monoid[A]
     with Isomorphic[Monoid, A, B] {
 
-    def zero: A = iso.from(B.zero)
+    def zero = iso.from(B.zero)
 
   }
 
@@ -70,8 +98,33 @@ trait TypeClasses {
     extends Equal[A]
     with Isomorphic[Equal, A, B] {
 
-    def equal(a1: A, a2: A): Boolean =
+    override def equal(a1: A, a2: A) =
       B.equal(iso.to(a1), iso.to(a2))
+
+  }
+
+  private trait IsomorphicOrder[A, B]
+    extends IsomorphicEqual[A, B]
+    with Order[A]
+    with Isomorphic[Order, A, B] {
+
+    override def equal(a1: A, a2: A) =
+      super[IsomorphicEqual].equal(a1, a2)
+
+    def order(x: A, y: A) =
+      B.order(iso.to(x), iso.to(y))
+
+  }
+
+  private trait IsomorphicShow[A, B]
+    extends Show[A]
+    with Isomorphic[Show, A, B] {
+
+    override def shows(f: A) =
+      B.shows(iso.to(f))
+
+    override def show(f: A) =
+      B.show(iso.to(f))
 
   }
 
@@ -99,6 +152,20 @@ trait TypeClasses {
       new IsomorphicEqual[A, B] { def B = b; def iso = ab }
   }
 
+  implicit def ShowI: TypeClass[Show] = new TypeClass[Show] with Empty {
+    def product[F, T <: HList](f: Show[F], t: Show[T]) =
+      new ProductShow[F, T] { def F = f; def T = t }
+    def derive[A, B](b: Show[B], ab: Iso[A, B]) =
+      new IsomorphicShow[A, B] { def B = b; def iso = ab }
+  }
+
+  implicit def OrderI: TypeClass[Order] = new TypeClass[Order] with Empty {
+    def product[F, T <: HList](f: Order[F], t: Order[T]) =
+      new ProductOrder[F, T] { def F = f; def T = t }
+    def derive[A, B](b: Order[B], ab: Iso[A, B]) =
+      new IsomorphicOrder[A, B] { def B = b; def iso = ab }
+  }
+
 
   // Boilerplate
 
@@ -110,6 +177,12 @@ trait TypeClasses {
 
   implicit def deriveEqual[F, G <: HList](implicit iso: Iso[F, G], hlistInst: TypeClass.HListInstance[Equal, G]): Equal[F] =
     TypeClass.deriveFromIso[Equal, F, G]
+
+  implicit def deriveShow[F, G <: HList](implicit iso: Iso[F, G], hlistInst: TypeClass.HListInstance[Show, G]): Show[F] =
+    TypeClass.deriveFromIso[Show, F, G]
+
+  implicit def deriveOrder[F, G <: HList](implicit iso: Iso[F, G], hlistInst: TypeClass.HListInstance[Order, G]): Order[F] =
+    TypeClass.deriveFromIso[Order, F, G]
 
 }
 
