@@ -6,6 +6,32 @@ Interoperability libraries for Shapeless
 [![Build Status](https://travis-ci.org/larsrh/shapeless-contrib.png?branch=master)](http://travis-ci.org/larsrh/shapeless-contrib)
 
 
+Usage
+-----
+
+This library is currently available for Scala 2.9.2 and Scala 2.10.
+
+To use the latest version, include the following in your `build.sbt`:
+
+```scala
+libraryDependencies ++= Seq(
+  "org.typelevel" %% "shapeless-scalacheck" % "0.1",
+  "org.typelevel" %% "shapeless-spire" % "0.1",
+  "org.typelevel" %% "shapeless-scalaz" % "0.1"
+)
+```
+
+I also recommend the following setting:
+
+```scala
+conflictWarning ~= { cw =>
+  cw.copy(filter = (id: ModuleID) => true, group = (id: ModuleID) => id.organization + ":" + id.name, level = Level.Error, failOnConflict = true)
+}
+```
+
+This snippet makes `sbt update` fail if you have conflicting dependencies.
+
+
 What does this library do?
 --------------------------
 
