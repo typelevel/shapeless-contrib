@@ -1,13 +1,36 @@
 import sbt._
 import Keys._
 
+import sbtrelease._
 import sbtrelease.ReleasePlugin._
+import sbtrelease.ReleasePlugin.ReleaseKeys._
+import sbtrelease.ReleaseStateTransformations._
+import sbtrelease.Utilities._
+
+import com.typesafe.sbt.pgp.PgpKeys._
 
 object ShapelessContribBuild extends Build {
 
   val shapelessVersion = "1.2.4"
   val scalazVersion = "7.0.0-M8"
   val scalacheckVersion = "1.10.0"
+
+
+  lazy val publishSignedArtifacts = ReleaseStep(
+    action = st => {
+      val extracted = st.extract
+      val ref = extracted.get(thisProjectRef)
+      extracted.runAggregated(publishSigned in Global in ref, st)
+    },
+    check = st => {
+      // getPublishTo fails if no publish repository is set up.
+      val ex = st.extract
+      val ref = ex.get(thisProjectRef)
+      Classpaths.getPublishTo(ex.get(publishTo in Global in ref))
+      st
+    },
+    enableCrossBuild = true
+  )
 
   lazy val standardSettings = Defaults.defaultSettings ++ releaseSettings ++ Seq(
     organization := "org.typelevel",
@@ -37,6 +60,22 @@ object ShapelessContribBuild extends Build {
     credentials += Credentials(
       Option(System.getProperty("build.publish.credentials")) map (new File(_)) getOrElse (Path.userHome / ".ivy2" / ".credentials")
     ),
+
+    // adapted from sbt-release defaults
+    // * does not perform `pushChanges`
+    // * performs `publish-signed` instead of `publish`
+    releaseProcess := Seq[ReleaseStep](
+      checkSnapshotDependencies,
+      inquireVersions,
+      runTest,
+      setReleaseVersion,
+      commitReleaseVersion,
+      tagRelease,
+      publishSignedArtifacts,
+      setNextVersion,
+      commitNextVersion
+    ),
+
     pomIncludeRepository := Function.const(false),
     pomExtra :=
       <url>http://typelevel.org/scalaz</url>
