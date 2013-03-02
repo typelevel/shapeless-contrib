@@ -39,7 +39,7 @@ object ShapelessContribBuild extends Build {
     crossScalaVersions := Seq("2.9.2", "2.10.0"),
     scalacOptions ++= Seq("-unchecked", "-deprecation"),
 
-    libraryDependencies += "com.chuusai" %% "shapeless" % shapelessVersion cross CrossVersion.full,
+    libraryDependencies += "com.chuusai" %% "shapeless" % shapelessVersion,
 
     resolvers += Resolver.sonatypeRepo("releases"),
 
