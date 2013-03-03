@@ -154,12 +154,16 @@ object ShapelessContribBuild extends Build {
     settings = standardSettings ++ Seq(
       name := "shapeless-spire",
       libraryDependencies ++= Seq(
-        "org.spire-math" %% "spire" % "0.3.0",
-
-        "org.scalatest" %% "scalatest" % "1.9.1",
-        "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
-        "org.spire-math" %% "spire-scalacheck-binding" % "0.3.0" % "test"
-      )
+        "org.scalatest" %% "scalatest" % "1.9.1" % "test",
+        "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
+      ),
+      libraryDependencies <++= (scalaVersion) { sv =>
+        val spireVersion = if (sv startsWith "2.9") "0.3.0" else "0.4.0-M1"
+        Seq(
+          "org.spire-math" %% "spire" % spireVersion,
+          "org.spire-math" %% "spire-scalacheck-binding" % spireVersion % "test"
+        )
+      }
     )
   )
 
