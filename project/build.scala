@@ -12,7 +12,7 @@ import com.typesafe.sbt.pgp.PgpKeys._
 object ShapelessContribBuild extends Build {
 
   val shapelessVersion = "1.2.4"
-  val scalazVersion = "7.0.0-M8"
+  val scalazVersion = "7.0.0-M9"
   val scalacheckVersion = "1.10.0"
 
 
@@ -78,7 +78,7 @@ object ShapelessContribBuild extends Build {
 
     pomIncludeRepository := Function.const(false),
     pomExtra :=
-      <url>http://typelevel.org/scalaz</url>
+      <url>http://typelevel.org/</url>
         <licenses>
           <license>
             <name>MIT</name>
@@ -87,9 +87,9 @@ object ShapelessContribBuild extends Build {
           </license>
         </licenses>
         <scm>
-            <url>https://github.com/larsrh/shapeless-contrib</url>
-            <connection>scm:git:git://github.com/larsrh/shapeless-contrib.git</connection>
-            <developerConnection>scm:git:git@github.com:larsrh/shapeless-contrib.git</developerConnection>
+            <url>https://github.com/typelevel/shapeless-contrib</url>
+            <connection>scm:git:git://github.com/typelevel/shapeless-contrib.git</connection>
+            <developerConnection>scm:git:git@github.com:typelevel/shapeless-contrib.git</developerConnection>
         </scm>
         <developers>
           <developer>
@@ -142,7 +142,7 @@ object ShapelessContribBuild extends Build {
         "org.specs2" %% "specs2" % "1.12.3" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
         "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
-        "org.typelevel" %% "scalaz-specs2" % "0.1.1" % "test"
+        "org.typelevel" %% "scalaz-specs2" % "0.1.2" % "test"
       )
     )
   )
