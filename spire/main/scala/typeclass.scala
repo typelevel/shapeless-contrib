@@ -9,7 +9,7 @@ import shapeless.contrib._
 private trait Empty {
 
   def emptyProduct = new Order[HNil] with AbGroup[HNil] with AdditiveAbGroup[HNil] with MultiplicativeAbGroup[HNil] {
-    def eqv(x: HNil, y: HNil) = true
+    override def eqv(x: HNil, y: HNil) = true
     override def neqv(x: HNil, y: HNil) = false
     def compare(x: HNil, y: HNil) = 0
     def op(x: HNil, y: HNil) = HNil
@@ -48,6 +48,9 @@ private trait ProductOrder[F, T <: HList]
   extends ProductEq[F, T]
   with Order[F :: T]
   with Product[Order, F, T] {
+
+  override def eqv(x: λ, y: λ) =
+    super[ProductEq].eqv(x, y)
 
   def compare(x: λ, y: λ) = {
     val headOrder = F.compare(x.head, y.head)

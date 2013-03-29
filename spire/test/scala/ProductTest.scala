@@ -4,7 +4,8 @@ import shapeless.Iso
 import shapeless.contrib.scalacheck._
 
 import spire.algebra.{Laws, LawChecker}
-import spire.implicits._
+import spire.std.int._
+import spire.std.long._
 
 class ProductTest extends LawChecker {
 
