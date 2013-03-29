@@ -5,10 +5,11 @@ import _root_.scalaz._
 import shapeless._
 import shapeless.contrib._
 
-package object scalaz extends Instances {
+package object scalaz extends Instances with Functions {
 
   object instances extends Instances
 
+  object functions extends Functions
 
 }
 
