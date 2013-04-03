@@ -12,7 +12,7 @@ import com.typesafe.sbt.pgp.PgpKeys._
 object ShapelessContribBuild extends Build {
 
   val shapelessVersion = "1.2.4"
-  val scalazVersion = "7.0.0-M9"
+  val scalazVersion = "7.0.0-RC1"
   val scalacheckVersion = "1.10.0"
 
 
@@ -142,7 +142,7 @@ object ShapelessContribBuild extends Build {
         "org.specs2" %% "specs2" % "1.12.3" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
         "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
-        "org.typelevel" %% "scalaz-specs2" % "0.1.2" % "test"
+        "org.typelevel" %% "scalaz-specs2" % "0.1.3" % "test"
       )
     )
   )
@@ -158,7 +158,7 @@ object ShapelessContribBuild extends Build {
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
       ),
       libraryDependencies <++= (scalaVersion) { sv =>
-        val spireVersion = if (sv startsWith "2.9") "0.3.0" else "0.4.0-M2"
+        val spireVersion = if (sv startsWith "2.9") "0.3.0" else "0.4.0-M3"
         Seq(
           "org.spire-math" %% "spire" % spireVersion,
           "org.spire-math" %% "spire-scalacheck-binding" % spireVersion % "test"

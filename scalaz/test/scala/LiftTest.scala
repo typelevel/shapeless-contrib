@@ -2,11 +2,11 @@ package shapeless.contrib.scalaz
 
 import org.scalacheck.Arbitrary._
 
-import org.specs2.scalaz.Spec
+import org.specs2.scalaz.{ScalazMatchers, Spec}
 
 import scalaz._
 
-class LiftTest extends Spec {
+class LiftTest extends Spec with ScalazMatchers {
 
   import scalaz.std.option._
   import scalaz.std.string._
@@ -21,7 +21,7 @@ class LiftTest extends Spec {
   "lifting a ternary operation" ! prop { (x: Option[Int], y: Option[String], z: Option[Float]) =>
     val r1 = lifted(x, y, z)
     val r2 = Apply[Option].ap3(x, y, z)((foo _).pure[Option])
-    r1 must be_===(r2)
+    r1 must equal(r2)
   }
 
 }
