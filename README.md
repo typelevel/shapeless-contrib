@@ -9,33 +9,23 @@ Interoperability libraries for Shapeless
 Usage
 -----
 
-This library is currently available for Scala 2.9.2 and Scala 2.10.
+This library is currently available for Scala 2.10.
 
 To use the latest version, include the following in your `build.sbt`:
 
 ```scala
 libraryDependencies ++= Seq(
-  "org.typelevel" %% "shapeless-scalacheck" % "0.1",
-  "org.typelevel" %% "shapeless-spire" % "0.1",
-  "org.typelevel" %% "shapeless-scalaz" % "0.1"
+  "org.typelevel" %% "shapeless-scalacheck" % "0.1.1",
+  "org.typelevel" %% "shapeless-spire" % "0.1.1",
+  "org.typelevel" %% "shapeless-scalaz" % "0.1.1"
 )
 ```
-
-I also recommend the following setting:
-
-```scala
-conflictWarning ~= { cw =>
-  cw.copy(filter = (id: ModuleID) => true, group = (id: ModuleID) => id.organization + ":" + id.name, level = Level.Error, failOnConflict = true)
-}
-```
-
-This snippet makes `sbt update` fail if you have conflicting dependencies.
 
 
 What does this library do?
 --------------------------
 
-`shapeless-contrib` aims to provide smooth interoperability between [Shapeless](https://github.com/milessabin/shapeless), [Scalaz](https://github.com/scalaz/scalaz/tree/scalaz-seven) and [Spire](https://github.com/non/spire). At the moment, this means automatic derivation of type class instances for case classes. Stay tuned for further developments.
+`shapeless-contrib` aims to provide smooth interoperability between [Shapeless](https://github.com/milessabin/shapeless), [Scalaz](https://github.com/scalaz/scalaz) and [Spire](https://github.com/non/spire). At the moment, this means automatic derivation of type class instances for case classes. Stay tuned for further developments.
 
 
 Examples
