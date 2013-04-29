@@ -23,7 +23,7 @@ object LifterAux {
 
 }
 
-trait Functions {
+trait LiftFunctions {
 
   def lift[T[_], F, R, L <: HList, OL <: HList, OF](f: T[F])(implicit T: Apply[T], hlister: FnHListerAux[F, L => R], lifter: LifterAux[T, L, R, OL], unhlister: FnUnHListerAux[OL => T[R], OF]): OF =
     lifter(f.map(_.hlisted)).unhlisted
