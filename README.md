@@ -21,6 +21,8 @@ libraryDependencies ++= Seq(
 )
 ```
 
+Some features are only available in the snapshot version (`0.2-SNAPSHOT`).
+
 
 What does this library do?
 --------------------------
@@ -30,6 +32,71 @@ What does this library do?
 
 Examples
 --------
+
+### Scalaz + Shapeless = Profit
+
+The combination of these two libraries allows for some nifty utility functions related to `scalaz.Applicative`:
+
+* lifting arbitrary functions (i.e. a generalized `liftA1`, `liftA2`, ...)
+* sequencing an `HList` (just like sequencing a `List`)
+
+```scala
+import shapeless._
+import shapeless.contrib.scalaz._
+
+import scalaz.std.option._
+
+// define a function with arbitrarily many parameters
+def foo(x: Int, y: String, z: Float) = s"$x - $y - $z"
+
+// lift it into `Option`
+val lifted = lift(Option(foo _))
+
+// resulting type: `(Option[Int], Option[String], Option[Float]) => Option[String]`
+
+
+// define an `HList` consisting of `Option`s
+val in = Option(1) :: Option("foo") :: HNil
+
+val sequenced = sequence(in)
+
+// resulting type: `Option[Int :: String :: HNil]`
+
+// works for `Validation`, too:
+import scalaz._
+import scalaz.std.string._
+
+val v1: Validation[String, Int] = Success(3)
+val v2: Validation[String, Float] = Failure("foo")
+sequence(v1 :: v2 :: HNil)
+
+// resulting type: `Validation[String, Int :: Float :: HNil]`
+```
+
+In addition to that, it also provides a conversion between their lens types:
+
+```scala
+import shapeless._
+import shapeless.Nat._
+import shapeless.contrib.scalaz._
+
+case class TwoElem(n: Int, x: String)
+implicit def TwoIso = Iso.hlist(TwoElem.apply _, TwoElem.unapply _)
+
+// Generate a `shapeless.Lens`
+val sLens = Lens[TwoElem] >> _0
+
+// Convert it to a `scalaz.Lens`
+val zsLens = sLens.asScalaz
+
+// The other way round:
+import scalaz.Lens
+
+val zLens = Lens.lensId[Int]
+val szLens = zLens.asShapeless
+```
+
+### Derive type classes
 
 Consider a simple case class with an addition operation:
 
