@@ -5,7 +5,7 @@ import shapeless._
 import scalaz._
 import scalaz.syntax.apply._
 
-// inspired by Travis Brown
+// inspired by Travis Brown and Michael Pilquist
 // <http://stackoverflow.com/a/16128064>
 trait SequenceFunctions {
 
