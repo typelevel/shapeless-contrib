@@ -6,27 +6,38 @@ import scalaz.syntax.applicative._
 import shapeless._
 import shapeless.Functions._
 
-trait LifterAux[T[_], H <: HList, R, O <: HList] {
-  def apply(tf: T[H => R]): O => T[R]
-}
+trait Lifts {
 
-object LifterAux {
-
-  implicit def liftZero[T[_], R](implicit T: Apply[T]): LifterAux[T, HNil, R, HNil] = new LifterAux[T, HNil, R, HNil] {
-    def apply(tf: T[HNil => R]) = hnil => tf.map(_(hnil))
+  trait LifterAux[G[_], I <: HList, R, GI <: HList] {
+    def apply(gf: G[I => R])(implicit G: Apply[G]): GI => G[R]
   }
 
-  implicit def liftCons[T[_], A, H <: HList, R, O <: HList](implicit T: Apply[T], tail: LifterAux[T, H, R, O]): LifterAux[T, A :: H, R, T[A] :: O] = new LifterAux[T, A :: H, R, T[A] :: O] {
-    def apply(tf: T[(A :: H) => R]) = hcons =>
-      tail(^(hcons.head, tf) { (a, f) => h => f(a :: h) })(hcons.tail)
+  object LifterAux {
+
+    implicit def liftZero[G[_], R]: LifterAux[G, HNil, R, HNil] = new LifterAux[G, HNil, R, HNil] {
+      def apply(gf: G[HNil => R])(implicit G: Apply[G]) = _ =>
+        gf map { _(HNil) }
+    }
+
+    implicit def liftCons[G[_], H, T <: HList, R, GI <: HList](implicit tail: LifterAux[G, T, R, GI]): LifterAux[G, H :: T, R, G[H] :: GI] = new LifterAux[G, H :: T, R, G[H] :: GI] {
+      def apply(gf: G[(H :: T) => R])(implicit G: Apply[G]) = {
+        case gh :: gi =>
+          tail(G.apply2(gh, gf) { (h, f) => t => f(h :: t) })(G)(gi)
+      }
+    }
+
   }
 
-}
+  implicit class ApplicativeOps[G[_]](instance: Applicative[G]) {
 
-trait LiftFunctions {
+    def liftA[F, R, I <: HList, GI <: HList, OF](f: F)(
+      implicit hlister: FnHListerAux[F, I => R],
+               lifter: LifterAux[G, I, R, GI],
+               unhlister: FnUnHListerAux[GI => G[R], OF]
+    ): OF =
+      lifter(instance.pure(f.hlisted))(instance).unhlisted
 
-  def lift[T[_], F, R, L <: HList, OL <: HList, OF](f: T[F])(implicit T: Apply[T], hlister: FnHListerAux[F, L => R], lifter: LifterAux[T, L, R, OL], unhlister: FnUnHListerAux[OL => T[R], OF]): OF =
-    lifter(f.map(_.hlisted)).unhlisted
+  }
 
 }
 

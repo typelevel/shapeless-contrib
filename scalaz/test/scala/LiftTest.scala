@@ -13,7 +13,7 @@ class LiftTest extends Spec with ScalazMatchers {
   import scalaz.syntax.applicative._
 
   def foo(x: Int, y: String, z: Float) = s"$x - $y - $z"
-  val lifted = lift((foo _).pure[Option])
+  val lifted = Applicative[Option].liftA(foo _)
 
   // check for type
   val _: (Option[Int], Option[String], Option[Float]) => Option[String] = lifted

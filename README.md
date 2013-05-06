@@ -50,7 +50,7 @@ import scalaz.std.option._
 def foo(x: Int, y: String, z: Float) = s"$x - $y - $z"
 
 // lift it into `Option`
-val lifted = lift(Option(foo _))
+val lifted = Applicative[Option].liftA(foo _)
 
 // resulting type: `(Option[Int], Option[String], Option[Float]) => Option[String]`
 
