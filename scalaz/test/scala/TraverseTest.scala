@@ -11,9 +11,9 @@ class TraverseTest extends Spec {
   import scalaz.std.option._
   import scalaz.std.string._
   import scalaz.syntax.apply._
-  import scalaz.syntax.validation._
+  import scalaz.syntax.std.option._
 
-  def optToValidation[T](opt: Option[T]): Validation[String, T] = opt.map(_.success).getOrElse("Nothing there!".fail)
+  def optToValidation[T](opt: Option[T]): Validation[String, T] = opt.toSuccess("Nothing there!")
 
   object headOption extends Poly1 {
     implicit def caseSet[T] = at[Set[T]](_.headOption)
