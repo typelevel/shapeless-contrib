@@ -38,17 +38,17 @@ object ShapelessContribBuild extends Build {
     licenses := Seq("MIT" → url("http://www.opensource.org/licenses/mit-license.php")),
     homepage := Some(url("http://typelevel.org/")),
 
-    scalaVersion := "2.10.1",
+    scalaVersion := "2.10.2",
     scalacOptions ++= Seq("-unchecked", "-deprecation"),
 
     libraryDependencies += "com.chuusai" %% "shapeless" % shapelessVersion,
 
+    dependencyOverrides +=
+      "org.scala-lang" % "scala-library" % scalaVersion.value,
+
     resolvers += Resolver.sonatypeRepo("releases"),
 
-    // https://github.com/sbt/sbt/issues/603
-    conflictWarning ~= { cw =>
-      cw.copy(filter = (id: ModuleID) => id.organization != "org.scala-lang", group = (id: ModuleID) => id.organization + ":" + id.name, level = Level.Error, failOnConflict = true)
-    },
+    conflictManager := ConflictManager.strict,
 
     sourceDirectory <<= baseDirectory(identity),
 
