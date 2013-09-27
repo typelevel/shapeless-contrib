@@ -107,6 +107,7 @@ package object spire {
       new IsomorphicMultiplicativeAbGroup[A, B] { def B = b; def to = ab; def from = ba }
   }
 
+
   // Boilerplate
 
   implicit def deriveEq[T] = macro TypeClass.derive_impl[Eq, T]

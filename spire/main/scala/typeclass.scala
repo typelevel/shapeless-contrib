@@ -164,6 +164,7 @@ private trait ProductMultiplicativeAbGroup[F, T <: HList]
   extends ProductMultiplicativeGroup[F, T]
   with MultiplicativeAbGroup[F :: T]
 
+
 // Isos
 
 private trait IsomorphicSemigroup[A, B]
@@ -172,6 +173,7 @@ private trait IsomorphicSemigroup[A, B]
 
   def op(x: A, y: A) =
     from(B.op(to(x), to(y)))
+
 }
 
 private trait IsomorphicMonoid[A, B]

@@ -11,7 +11,6 @@ trait Product[+C[_], F, T <: HList] {
 
 trait Isomorphic[+C[_], A, B] {
   def B: C[B]
-
   def to: A => B
   def from: B => A
 }
