@@ -4,7 +4,8 @@ import scalaz._
 import scalaz.syntax.applicative._
 
 import shapeless._
-import shapeless.ops.hlist._
+import shapeless.ops.function._
+import shapeless.syntax.std.function._
 
 trait Lifts {
 
@@ -30,11 +31,12 @@ trait Lifts {
 
   implicit class ApplicativeOps[G[_]](instance: Applicative[G]) {
 
-    def liftA[F, PI, R, I <: HList](f: PI => R)(
-      implicit lifter: LifterAux[G, I, R, I],
-               tupler: Tupler.Aux[I, PI], gen: Generic.Aux[PI, I]
-    ): PI => G[R] =
-      pi => lifter(instance.pure((i: I) => f(tupler(i))))(instance)(gen.to(pi))
+    def liftA[F, R, I <: HList, GI <: HList, OF](f: F)(
+      implicit hlister: FnToProduct.Aux[F, I => R],
+               lifter: LifterAux[G, I, R, GI],
+               unhlister: FnFromProduct.Aux[GI => G[R], OF]
+    ): OF =
+      lifter(instance.pure(f.toProduct))(instance).fromProduct
 
   }
 
