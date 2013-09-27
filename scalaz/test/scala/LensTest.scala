@@ -1,6 +1,5 @@
 package shapeless.contrib.scalaz
 
-import shapeless.Iso
 import shapeless.Lens
 import shapeless.Lens._
 import shapeless.Nat._
@@ -16,7 +15,6 @@ class LensTest extends Spec {
   import scalaz.std.string._
 
   case class TwoElem(n: Int, x: String)
-  implicit def TwoIso = Iso.hlist(TwoElem.apply _, TwoElem.unapply _)
 
   val nLens = Lens[TwoElem] >> _0
   val xLens = Lens[TwoElem] >> _1
@@ -25,7 +23,6 @@ class LensTest extends Spec {
   checkAll("case class >>  _1", lens.laws(xLens.asScalaz))
 
   case class Nested(a: Int, b: TwoElem)
-  implicit def NestedIso = Iso.hlist(Nested.apply _, Nested.unapply _)
 
   val bnLens = Lens[Nested] >> _1 >> _0
   val bxLens = Lens[Nested] >> _1 >> _1
