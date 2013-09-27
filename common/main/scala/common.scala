@@ -11,7 +11,8 @@ trait Product[+C[_], F, T <: HList] {
 
 trait Isomorphic[+C[_], A, B] {
   def B: C[B]
-  def iso: Iso[A, B]
+  def to: A => B
+  def from: B => A
 }
 
 // vim: expandtab:ts=2:sw=2

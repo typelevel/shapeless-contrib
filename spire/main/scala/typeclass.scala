@@ -172,7 +172,7 @@ private trait IsomorphicSemigroup[A, B]
   with Isomorphic[Semigroup, A, B] {
 
   def op(x: A, y: A) =
-    iso.from(B.op(iso.to(x), iso.to(y)))
+    from(B.op(to(x), to(y)))
 
 }
 
@@ -181,7 +181,7 @@ private trait IsomorphicMonoid[A, B]
   with Monoid[A]
   with Isomorphic[Monoid, A, B] {
 
-  def id = iso.from(B.id)
+  def id = from(B.id)
 
 }
 
@@ -191,7 +191,7 @@ private trait IsomorphicGroup[A, B]
   with Isomorphic[Group, A, B] {
 
   def inverse(a: A) =
-    iso.from(B.inverse(iso.to(a)))
+    from(B.inverse(to(a)))
 
 }
 
@@ -204,7 +204,7 @@ private trait IsomorphicAdditiveSemigroup[A, B]
   with Isomorphic[AdditiveSemigroup, A, B] {
 
   def plus(x: A, y: A) =
-    iso.from(B.plus(iso.to(x), iso.to(y)))
+    from(B.plus(to(x), to(y)))
 
 }
 
@@ -213,7 +213,7 @@ private trait IsomorphicAdditiveMonoid[A, B]
   with AdditiveMonoid[A]
   with Isomorphic[AdditiveMonoid, A, B] {
 
-  def zero = iso.from(B.zero)
+  def zero = from(B.zero)
 
 }
 
@@ -223,10 +223,10 @@ private trait IsomorphicAdditiveGroup[A, B]
   with Isomorphic[AdditiveGroup, A, B] {
 
   def negate(a: A) =
-    iso.from(B.negate(iso.to(a)))
+    from(B.negate(to(a)))
 
   override def minus(x: A, y: A) =
-    iso.from(B.minus(iso.to(x), iso.to(y)))
+    from(B.minus(to(x), to(y)))
 
 }
 
@@ -239,7 +239,7 @@ private trait IsomorphicMultiplicativeSemigroup[A, B]
   with Isomorphic[MultiplicativeSemigroup, A, B] {
 
   def times(x: A, y: A) =
-    iso.from(B.times(iso.to(x), iso.to(y)))
+    from(B.times(to(x), to(y)))
 
 }
 
@@ -248,7 +248,7 @@ private trait IsomorphicMultiplicativeMonoid[A, B]
   with MultiplicativeMonoid[A]
   with Isomorphic[MultiplicativeMonoid, A, B] {
 
-  def one = iso.from(B.one)
+  def one = from(B.one)
 
 }
 
@@ -258,10 +258,10 @@ private trait IsomorphicMultiplicativeGroup[A, B]
   with Isomorphic[MultiplicativeGroup, A, B] {
 
   override def reciprocal(a: A) =
-    iso.from(B.reciprocal(iso.to(a)))
+    from(B.reciprocal(to(a)))
 
   def div(x: A, y: A) =
-    iso.from(B.div(iso.to(x), iso.to(y)))
+    from(B.div(to(x), to(y)))
 
 }
 
