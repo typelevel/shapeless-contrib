@@ -1,6 +1,5 @@
 package shapeless.contrib.spire
 
-import shapeless._
 import shapeless.contrib.scalacheck._
 
 import spire.algebra._
