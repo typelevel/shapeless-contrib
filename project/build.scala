@@ -12,7 +12,7 @@ import com.typesafe.sbt.pgp.PgpKeys._
 object ShapelessContribBuild extends Build {
 
   val shapelessVersion = "1.2.4"
-  val scalazVersion = "7.0.0"
+  val scalazVersion = "7.0.3"
   val scalacheckVersion = "1.10.0"
 
 
@@ -38,17 +38,12 @@ object ShapelessContribBuild extends Build {
     licenses := Seq("MIT" → url("http://www.opensource.org/licenses/mit-license.php")),
     homepage := Some(url("http://typelevel.org/")),
 
-    scalaVersion := "2.10.1",
+    scalaVersion := "2.10.2",
     scalacOptions ++= Seq("-unchecked", "-deprecation"),
 
     libraryDependencies += "com.chuusai" %% "shapeless" % shapelessVersion,
 
     resolvers += Resolver.sonatypeRepo("releases"),
-
-    // https://github.com/sbt/sbt/issues/603
-    conflictWarning ~= { cw =>
-      cw.copy(filter = (id: ModuleID) => id.organization != "org.scala-lang", group = (id: ModuleID) => id.organization + ":" + id.name, level = Level.Error, failOnConflict = true)
-    },
 
     sourceDirectory <<= baseDirectory(identity),
 
