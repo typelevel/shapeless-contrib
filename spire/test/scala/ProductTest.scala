@@ -6,6 +6,7 @@ import shapeless.contrib.scalacheck._
 import spire.algebra._
 import spire.std.int._
 import spire.std.long._
+import spire.laws._
 
 class ProductTest extends LawChecker {
 

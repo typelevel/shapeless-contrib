@@ -131,7 +131,7 @@ object ShapelessContribBuild extends Build {
         "org.specs2" %% "specs2" % "1.12.3" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
         "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
-        "org.typelevel" %% "scalaz-specs2" % "0.1.4" % "test"
+        "org.typelevel" %% "scalaz-specs2" % "0.1.5" % "test"
       )
     )
   )
@@ -145,8 +145,8 @@ object ShapelessContribBuild extends Build {
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "1.9.1" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
-        "org.spire-math" %% "spire" % "0.4.0-M3",
-        "org.spire-math" %% "spire-scalacheck-binding" % "0.4.0-M3" % "test"
+        "org.spire-math" %% "spire" % "0.6.1",
+        "org.spire-math" %% "spire-scalacheck-binding" % "0.6.1" % "test"
       )
     )
   )
