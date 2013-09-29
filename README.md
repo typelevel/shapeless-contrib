@@ -15,9 +15,9 @@ To use the latest version, include the following in your `build.sbt`:
 
 ```scala
 libraryDependencies ++= Seq(
-  "org.typelevel" %% "shapeless-scalacheck" % "0.1.1",
-  "org.typelevel" %% "shapeless-spire" % "0.1.1",
-  "org.typelevel" %% "shapeless-scalaz" % "0.1.1"
+  "org.typelevel" %% "shapeless-scalacheck" % "0.1.2",
+  "org.typelevel" %% "shapeless-spire" % "0.1.2",
+  "org.typelevel" %% "shapeless-scalaz" % "0.1.2"
 )
 ```
 
@@ -34,6 +34,8 @@ Examples
 --------
 
 ### Scalaz + Shapeless = Profit
+
+_Note:_ The 0.1.x series of this library depends on shapeless 1.2.x, whereas the newer 0.2.x series depends on shapeless 2.0.0.
 
 The combination of these two libraries allows for some nifty utility functions related to `scalaz.Applicative`:
 
