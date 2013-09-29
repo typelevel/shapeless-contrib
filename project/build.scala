@@ -12,7 +12,7 @@ import com.typesafe.sbt.pgp.PgpKeys._
 object ShapelessContribBuild extends Build {
 
   val shapelessVersion = "1.2.4"
-  val scalazVersion = "7.0.0"
+  val scalazVersion = "7.0.3"
   val scalacheckVersion = "1.10.0"
 
 
@@ -43,12 +43,7 @@ object ShapelessContribBuild extends Build {
 
     libraryDependencies += "com.chuusai" %% "shapeless" % shapelessVersion,
 
-    dependencyOverrides +=
-      "org.scala-lang" % "scala-library" % scalaVersion.value,
-
     resolvers += Resolver.sonatypeRepo("releases"),
-
-    conflictManager := ConflictManager.strict,
 
     sourceDirectory <<= baseDirectory(identity),
 
