@@ -44,10 +44,10 @@ object ShapelessContribBuild extends Build {
     libraryDependencies +=
       "com.chuusai" %% "shapeless" % shapelessVersion cross CrossVersion.full,
 
-    dependencyOverrides ++= Set(
-      "org.scala-lang" % "scala-library" % scalaVersion.value,
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value
-    ),
+    dependencyOverrides ++=
+      List("library", "reflect", "actors").map{sub =>
+        "org.scala-lang" % s"scala-$sub" % scalaVersion.value
+      }.toSet,
 
     resolvers += Resolver.sonatypeRepo("releases"),
 
