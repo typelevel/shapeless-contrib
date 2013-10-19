@@ -1,6 +1,6 @@
 package shapeless.contrib.scalaz
 
-import scalaz._
+import scalaz.{Coproduct => _, _}
 
 import shapeless._
 import shapeless.contrib._
@@ -71,6 +71,52 @@ private trait ProductShow[F, T <: HList]
 
 }
 
+// Coproducts
+
+private trait SumEqual[L, R <: Coproduct]
+  extends Equal[L :+: R]
+  with Sum[Equal, L, R] {
+
+  def equal(a1: λ, a2: λ) = (a1, a2) match {
+    case (Inl(l1), Inl(l2)) => L.equal(l1, l2)
+    case (Inr(r1), Inr(r2)) => R.equal(r1, r2)
+    case _ => false
+  }
+
+}
+
+private trait SumOrder[L, R <: Coproduct]
+  extends SumEqual[L, R]
+  with Order[L :+: R]
+  with Sum[Order, L, R] {
+
+  override def equal(a1: λ, a2: λ) =
+    super[SumEqual].equal(a1, a2)
+
+  def order(x: λ, y: λ) = (x, y) match {
+    case (Inl(a), Inl(b)) => L.order(a, b)
+    case (Inl(_), Inr(_)) => Ordering.LT
+    case (Inr(_), Inl(_)) => Ordering.GT
+    case (Inr(a), Inr(b)) => R.order(a, b)
+  }
+
+}
+
+private trait SumShow[L, R <: Coproduct]
+  extends Show[L :+: R]
+  with Sum[Show, L, R] {
+
+  override def shows(f: λ) = f match {
+    case Inl(l) => s"Inl(${L.shows(l)})"
+    case Inr(r) => s"Inr(${R.shows(r)})"
+  }
+
+  override def show(f: λ) = f match {
+    case Inl(l) => Cord("Inl(") ++ L.show(l) ++ Cord(")")
+    case Inr(r) => Cord("Inr(") ++ R.show(r) ++ Cord(")")
+  }
+
+}
 
 // Isos
 
@@ -144,23 +190,29 @@ trait Instances {
       new IsomorphicMonoid[A, B] { def B = b; def to = ab; def from = ba }
   }
 
-  implicit def EqualI: ProductTypeClass[Equal] = new ProductTypeClass[Equal] with Empty {
+  implicit def EqualI: TypeClass[Equal] = new TypeClass[Equal] with Empty {
     def product[F, T <: HList](f: Equal[F], t: Equal[T]) =
       new ProductEqual[F, T] { def F = f; def T = t }
+    def coproduct[L, R <: Coproduct](l: => Equal[L], r: => Equal[R]) =
+      new SumEqual[L, R] { def L = l; def R = r }
     def project[A, B](b: => Equal[B], ab: A => B, ba: B => A) =
       new IsomorphicEqual[A, B] { def B = b; def to = ab; def from = ba }
   }
 
-  implicit def ShowI: ProductTypeClass[Show] = new ProductTypeClass[Show] with Empty {
+  implicit def ShowI: TypeClass[Show] = new TypeClass[Show] with Empty {
     def product[F, T <: HList](f: Show[F], t: Show[T]) =
       new ProductShow[F, T] { def F = f; def T = t }
+    def coproduct[L, R <: Coproduct](l: => Show[L], r: => Show[R]) =
+      new SumShow[L, R] { def L = l; def R = r }
     def project[A, B](b: => Show[B], ab: A => B, ba: B => A) =
       new IsomorphicShow[A, B] { def B = b; def to = ab; def from = ba }
   }
 
-  implicit def OrderI: ProductTypeClass[Order] = new ProductTypeClass[Order] with Empty {
+  implicit def OrderI: TypeClass[Order] = new TypeClass[Order] with Empty {
     def product[F, T <: HList](f: Order[F], t: Order[T]) =
       new ProductOrder[F, T] { def F = f; def T = t }
+    def coproduct[L, R <: Coproduct](l: => Order[L], r: => Order[R]) =
+      new SumOrder[L, R] { def L = l; def R = r }
     def project[A, B](b: => Order[B], ab: A => B, ba: B => A) =
       new IsomorphicOrder[A, B] { def B = b; def to = ab; def from = ba }
   }
