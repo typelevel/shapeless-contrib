@@ -79,7 +79,7 @@ private trait IsomorphicSemigroup[A, B]
   with Isomorphic[Semigroup, A, B] {
 
   def append(f1: A, f2: => A) =
-    iso.from(B.append(iso.to(f1), iso.to(f2)))
+    from(B.append(to(f1), to(f2)))
 
 }
 
@@ -88,7 +88,7 @@ private trait IsomorphicMonoid[A, B]
   with Monoid[A]
   with Isomorphic[Monoid, A, B] {
 
-  def zero = iso.from(B.zero)
+  def zero = from(B.zero)
 
 }
 
@@ -97,7 +97,7 @@ private trait IsomorphicEqual[A, B]
   with Isomorphic[Equal, A, B] {
 
   override def equal(a1: A, a2: A) =
-    B.equal(iso.to(a1), iso.to(a2))
+    B.equal(to(a1), to(a2))
 
 }
 
@@ -110,7 +110,7 @@ private trait IsomorphicOrder[A, B]
     super[IsomorphicEqual].equal(a1, a2)
 
   def order(x: A, y: A) =
-    B.order(iso.to(x), iso.to(y))
+    B.order(to(x), to(y))
 
 }
 
@@ -119,10 +119,10 @@ private trait IsomorphicShow[A, B]
   with Isomorphic[Show, A, B] {
 
   override def shows(f: A) =
-    B.shows(iso.to(f))
+    B.shows(to(f))
 
   override def show(f: A) =
-    B.show(iso.to(f))
+    B.show(to(f))
 
 }
 
@@ -130,58 +130,53 @@ trait Instances {
 
   // Instances
 
-  implicit def SemigroupI: TypeClass[Semigroup] = new TypeClass[Semigroup] with Empty {
+  implicit def SemigroupI: ProductTypeClass[Semigroup] = new ProductTypeClass[Semigroup] with Empty {
     def product[F, T <: HList](f: Semigroup[F], t: Semigroup[T]) =
       new ProductSemigroup[F, T] { def F = f; def T = t }
-    def derive[A, B](b: Semigroup[B], ab: Iso[A, B]) =
-      new IsomorphicSemigroup[A, B] { def B = b; def iso = ab }
+    def project[A, B](b: => Semigroup[B], ab: A => B, ba: B => A) =
+      new IsomorphicSemigroup[A, B] { def B = b; def to = ab; def from = ba }
   }
 
-  implicit def MonoidI: TypeClass[Monoid] = new TypeClass[Monoid] with Empty {
+  implicit def MonoidI: ProductTypeClass[Monoid] = new ProductTypeClass[Monoid] with Empty {
     def product[F, T <: HList](f: Monoid[F], t: Monoid[T]) =
       new ProductMonoid[F, T] { def F = f; def T = t }
-    def derive[A, B](b: Monoid[B], ab: Iso[A, B]) =
-      new IsomorphicMonoid[A, B] { def B = b; def iso = ab }
+    def project[A, B](b: => Monoid[B], ab: A => B, ba: B => A) =
+      new IsomorphicMonoid[A, B] { def B = b; def to = ab; def from = ba }
   }
 
-  implicit def EqualI: TypeClass[Equal] = new TypeClass[Equal] with Empty {
+  implicit def EqualI: ProductTypeClass[Equal] = new ProductTypeClass[Equal] with Empty {
     def product[F, T <: HList](f: Equal[F], t: Equal[T]) =
       new ProductEqual[F, T] { def F = f; def T = t }
-    def derive[A, B](b: Equal[B], ab: Iso[A, B]) =
-      new IsomorphicEqual[A, B] { def B = b; def iso = ab }
+    def project[A, B](b: => Equal[B], ab: A => B, ba: B => A) =
+      new IsomorphicEqual[A, B] { def B = b; def to = ab; def from = ba }
   }
 
-  implicit def ShowI: TypeClass[Show] = new TypeClass[Show] with Empty {
+  implicit def ShowI: ProductTypeClass[Show] = new ProductTypeClass[Show] with Empty {
     def product[F, T <: HList](f: Show[F], t: Show[T]) =
       new ProductShow[F, T] { def F = f; def T = t }
-    def derive[A, B](b: Show[B], ab: Iso[A, B]) =
-      new IsomorphicShow[A, B] { def B = b; def iso = ab }
+    def project[A, B](b: => Show[B], ab: A => B, ba: B => A) =
+      new IsomorphicShow[A, B] { def B = b; def to = ab; def from = ba }
   }
 
-  implicit def OrderI: TypeClass[Order] = new TypeClass[Order] with Empty {
+  implicit def OrderI: ProductTypeClass[Order] = new ProductTypeClass[Order] with Empty {
     def product[F, T <: HList](f: Order[F], t: Order[T]) =
       new ProductOrder[F, T] { def F = f; def T = t }
-    def derive[A, B](b: Order[B], ab: Iso[A, B]) =
-      new IsomorphicOrder[A, B] { def B = b; def iso = ab }
+    def project[A, B](b: => Order[B], ab: A => B, ba: B => A) =
+      new IsomorphicOrder[A, B] { def B = b; def to = ab; def from = ba }
   }
 
 
   // Boilerplate
 
-  implicit def deriveSemigroup[F, G <: HList](implicit iso: Iso[F, G], hlistInst: TypeClass.HListInstance[Semigroup, G]): Semigroup[F] =
-    TypeClass.deriveFromIso[Semigroup, F, G]
+  implicit def deriveSemigroup[T] = macro TypeClass.derive_impl[Semigroup, T]
 
-  implicit def deriveMonoid[F, G <: HList](implicit iso: Iso[F, G], hlistInst: TypeClass.HListInstance[Monoid, G]): Monoid[F] =
-    TypeClass.deriveFromIso[Monoid, F, G]
+  implicit def deriveMonoid[T] = macro TypeClass.derive_impl[Monoid, T]
 
-  implicit def deriveEqual[F, G <: HList](implicit iso: Iso[F, G], hlistInst: TypeClass.HListInstance[Equal, G]): Equal[F] =
-    TypeClass.deriveFromIso[Equal, F, G]
+  implicit def deriveEqual[T] = macro TypeClass.derive_impl[Equal, T]
 
-  implicit def deriveShow[F, G <: HList](implicit iso: Iso[F, G], hlistInst: TypeClass.HListInstance[Show, G]): Show[F] =
-    TypeClass.deriveFromIso[Show, F, G]
+  implicit def deriveShow[T] = macro TypeClass.derive_impl[Show, T]
 
-  implicit def deriveOrder[F, G <: HList](implicit iso: Iso[F, G], hlistInst: TypeClass.HListInstance[Order, G]): Order[F] =
-    TypeClass.deriveFromIso[Order, F, G]
+  implicit def deriveOrder[T] = macro TypeClass.derive_impl[Order, T]
 
 }
 

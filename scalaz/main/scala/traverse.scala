@@ -1,6 +1,7 @@
 package shapeless.contrib.scalaz
 
 import shapeless._
+import shapeless.ops.hlist._
 import shapeless.Poly._
 
 import scalaz.Applicative
@@ -12,7 +13,7 @@ sealed trait TraverserAux[I <: HList, P, F[_], O <: HList] {
 object TraverserAux {
 
   implicit def fromSequencerAndMapper[I <: HList, P, F[_], S <: HList, O <: HList](
-    implicit mapper: MapperAux[P, I, S],
+    implicit mapper: Mapper.Aux[P, I, S],
              sequencer: SequencerAux[F, S, O]
   ): TraverserAux[I, P, F, O] = new TraverserAux[I, P, F, O] {
     def apply(in: I) = sequencer(mapper(in))

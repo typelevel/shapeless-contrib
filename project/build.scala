@@ -11,7 +11,7 @@ import com.typesafe.sbt.pgp.PgpKeys._
 
 object ShapelessContribBuild extends Build {
 
-  val shapelessVersion = "1.2.4"
+  val shapelessVersion = "2.0.0-M1"
   val scalazVersion = "7.0.3"
   val scalacheckVersion = "1.10.0"
 
@@ -41,7 +41,8 @@ object ShapelessContribBuild extends Build {
     scalaVersion := "2.10.2",
     scalacOptions ++= Seq("-unchecked", "-deprecation"),
 
-    libraryDependencies += "com.chuusai" %% "shapeless" % shapelessVersion,
+    libraryDependencies +=
+      "com.chuusai" %% "shapeless" % shapelessVersion cross CrossVersion.full,
 
     resolvers += Resolver.sonatypeRepo("releases"),
 
@@ -89,6 +90,8 @@ object ShapelessContribBuild extends Build {
     )
   )
 
+  lazy val hasMacros = (scalacOptions += "-language:experimental.macros")
+
   lazy val shapelessContrib = Project(
     id = "shapeless-contrib",
     base = file("."),
@@ -111,6 +114,7 @@ object ShapelessContribBuild extends Build {
     base = file("scalacheck"),
     settings = standardSettings ++ Seq(
       name := "shapeless-scalacheck",
+      hasMacros,
       libraryDependencies ++= Seq(
         "org.scalaz" %% "scalaz-core" % scalazVersion,
         "org.scalacheck" %% "scalacheck" % scalacheckVersion,
@@ -125,6 +129,7 @@ object ShapelessContribBuild extends Build {
     dependencies = Seq(common, scalacheck % "test"),
     settings = standardSettings ++ Seq(
       name := "shapeless-scalaz",
+      hasMacros,
       libraryDependencies ++= Seq(
         "org.scalaz" %% "scalaz-core" % scalazVersion,
 
@@ -142,6 +147,7 @@ object ShapelessContribBuild extends Build {
     dependencies = Seq(common, scalacheck % "test"),
     settings = standardSettings ++ Seq(
       name := "shapeless-spire",
+      hasMacros,
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "1.9.1" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
