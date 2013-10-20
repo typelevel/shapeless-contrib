@@ -11,7 +11,7 @@ import com.typesafe.sbt.pgp.PgpKeys._
 
 object ShapelessContribBuild extends Build {
 
-  val shapelessVersion = "2.0.0-M1"
+  val shapelessVersion = "2.0.0-SNAPSHOT"
   val scalazVersion = "7.0.3"
   val scalacheckVersion = "1.10.0"
 
@@ -45,6 +45,7 @@ object ShapelessContribBuild extends Build {
       "com.chuusai" %% "shapeless" % shapelessVersion cross CrossVersion.full,
 
     resolvers += Resolver.sonatypeRepo("releases"),
+    resolvers += Resolver.sonatypeRepo("snapshots"),
 
     sourceDirectory <<= baseDirectory(identity),
 
