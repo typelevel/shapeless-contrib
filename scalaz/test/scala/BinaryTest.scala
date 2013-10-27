@@ -50,6 +50,24 @@ class BinaryTest extends Spec with OptionMatchers {
     }
   }
 
+  sealed trait Cases[A, B]
+  case class Case1[A, B](a: A) extends Cases[A, B]
+  case class Case2[A, B](b: B) extends Cases[A, B]
+
+  sealed trait Tree[A]
+  case class Node[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+  case class Leaf[A](item: A) extends Tree[A]
+
+  "multi-case class instances" should {
+    import Binary.auto._
+
+    binaryLaws[Cases[OneElem, TwoElem]]("Cases[OneElem, TwoElem]")
+    binaryLaws[Cases[Complex, Complex]]("Cases[Complex, Complex]")
+
+    binaryLaws[Tree[Int]]("Tree[Int]")
+    binaryLaws[Tree[Complex]]("Tree[Complex]")
+  }
+
   "checksum" should {
     "complain when broken" ! prop { (n: Long) =>
       val binary = Binary[Long].withChecksum(new java.util.zip.CRC32)
