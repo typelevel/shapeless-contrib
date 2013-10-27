@@ -12,11 +12,15 @@ package object scalacheck {
 
     def product[H, T <: HList](h: Arbitrary[H], t: Arbitrary[T]) =
       Arbitrary(Gen.sized { size =>
-        val resizedH = Gen.resize(size/2, h.arbitrary)
-        val resizedT = Gen.resize(size/2, t.arbitrary)
-        for { h <- resizedH; t <- resizedT }
-          yield h :: t
-        })
+        if (size == 0)
+          Gen.fail
+        else {
+          val half = size.abs/2
+          val resizedH = Gen.resize(half, h.arbitrary)
+          val resizedT = Gen.resize(half, t.arbitrary)
+          for { h <- resizedH; t <- resizedT }
+            yield h :: t
+        }})
 
     def coproduct[L, R <: Coproduct](l: => Arbitrary[L], r: => Arbitrary[R]) = {
       lazy val mappedL = l.arbitrary.map(Inl(_): L :+: R)
