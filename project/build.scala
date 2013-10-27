@@ -117,9 +117,7 @@ object ShapelessContribBuild extends Build {
       name := "shapeless-scalacheck",
       hasMacros,
       libraryDependencies ++= Seq(
-        "org.scalaz" %% "scalaz-core" % scalazVersion,
-        "org.scalacheck" %% "scalacheck" % scalacheckVersion,
-        "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion
+        "org.scalacheck" %% "scalacheck" % scalacheckVersion
       )
     )
   )

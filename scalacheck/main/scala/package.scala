@@ -2,10 +2,6 @@ package shapeless.contrib
 
 import shapeless._
 
-import scalaz.{Coproduct => _, _}
-import scalaz.syntax.apply._
-import scalaz.scalacheck.ScalaCheckBinding._
-
 import org.scalacheck.{Gen, Arbitrary}
 
 package object scalacheck {
@@ -15,15 +11,19 @@ package object scalacheck {
     def emptyProduct = Arbitrary(Gen.value(HNil))
 
     def product[F, T <: HList](f: Arbitrary[F], t: Arbitrary[T]) =
-      (f |@| t) { _ :: _ }
+      Arbitrary(for { fv <- f.arbitrary; tv <- t.arbitrary } yield fv :: tv)
 
-    def coproduct[L, R <: Coproduct](l: => Arbitrary[L], r: => Arbitrary[R]) =
-      Arbitrary(Gen.oneOf(
-        l.arbitrary.map(Inl(_): L :+: R), r.arbitrary.map(Inr(_): L :+: R)
-      ))
+    def coproduct[L, R <: Coproduct](l: => Arbitrary[L], r: => Arbitrary[R]) = {
+      lazy val mappedL = l.arbitrary.map(Inl(_): L :+: R)
+      lazy val mappedR = r.arbitrary.map(Inr(_): L :+: R)
+      Arbitrary(for {
+        which <- Gen.oneOf(false, true)
+        result <- if (which) mappedL else mappedR
+      } yield result)
+    }
 
     def project[A, B](b: => Arbitrary[B], ab: A => B, ba: B => A) =
-      b.map(ba)
+      Arbitrary(b.arbitrary.map(ba))
 
   }
 
