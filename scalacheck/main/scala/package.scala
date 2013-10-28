@@ -10,8 +10,17 @@ package object scalacheck {
 
     def emptyProduct = Arbitrary(Gen.value(HNil))
 
-    def product[F, T <: HList](f: Arbitrary[F], t: Arbitrary[T]) =
-      Arbitrary(for { fv <- f.arbitrary; tv <- t.arbitrary } yield fv :: tv)
+    def product[H, T <: HList](h: Arbitrary[H], t: Arbitrary[T]) =
+      Arbitrary(Gen.sized { size =>
+        if (size == 0)
+          Gen.fail
+        else {
+          val half = size.abs/2
+          val resizedH = Gen.resize(half, h.arbitrary)
+          val resizedT = Gen.resize(half, t.arbitrary)
+          for { h <- resizedH; t <- resizedT }
+            yield h :: t
+        }})
 
     def coproduct[L, R <: Coproduct](l: => Arbitrary[L], r: => Arbitrary[R]) = {
       lazy val mappedL = l.arbitrary.map(Inl(_): L :+: R)
