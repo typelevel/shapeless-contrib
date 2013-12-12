@@ -220,15 +220,15 @@ trait Instances {
 
   // Boilerplate
 
-  implicit def deriveSemigroup[T] = macro TypeClass.derive_impl[Semigroup, T]
+  implicit def deriveSemigroup[T]: Semigroup[T] = macro TypeClass.derive_impl[Semigroup, T]
 
-  implicit def deriveMonoid[T] = macro TypeClass.derive_impl[Monoid, T]
+  implicit def deriveMonoid[T]: Monoid[T] = macro TypeClass.derive_impl[Monoid, T]
 
-  implicit def deriveEqual[T] = macro TypeClass.derive_impl[Equal, T]
+  implicit def deriveEqual[T]: Equal[T] = macro TypeClass.derive_impl[Equal, T]
 
-  implicit def deriveShow[T] = macro TypeClass.derive_impl[Show, T]
+  implicit def deriveShow[T]: Show[T] = macro TypeClass.derive_impl[Show, T]
 
-  implicit def deriveOrder[T] = macro TypeClass.derive_impl[Order, T]
+  implicit def deriveOrder[T]: Order[T] = macro TypeClass.derive_impl[Order, T]
 
 }
 

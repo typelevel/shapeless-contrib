@@ -110,41 +110,41 @@ package object spire {
 
   // Boilerplate
 
-  implicit def deriveEq[T] = macro TypeClass.derive_impl[Eq, T]
+  implicit def deriveEq[T]: Eq[T] = macro TypeClass.derive_impl[Eq, T]
 
-  implicit def deriveOrder[T] = macro TypeClass.derive_impl[Order, T]
+  implicit def deriveOrder[T]: Order[T] = macro TypeClass.derive_impl[Order, T]
 
-  implicit def deriveSemigroup[T] =
+  implicit def deriveSemigroup[T]: Semigroup[T] =
     macro TypeClass.derive_impl[Semigroup, T]
 
-  implicit def deriveMonoid[T] = macro TypeClass.derive_impl[Monoid, T]
+  implicit def deriveMonoid[T]: Monoid[T] = macro TypeClass.derive_impl[Monoid, T]
 
-  implicit def deriveGroup[T] = macro TypeClass.derive_impl[Group, T]
+  implicit def deriveGroup[T]: Group[T] = macro TypeClass.derive_impl[Group, T]
 
-  implicit def deriveAbGroup[T] = macro TypeClass.derive_impl[AbGroup, T]
+  implicit def deriveAbGroup[T]: AbGroup[T] = macro TypeClass.derive_impl[AbGroup, T]
 
-  implicit def deriveAdditiveSemigroup[T] =
+  implicit def deriveAdditiveSemigroup[T]: AdditiveSemigroup[T] =
     macro TypeClass.derive_impl[AdditiveSemigroup, T]
 
-  implicit def deriveAdditiveMonoid[T] =
+  implicit def deriveAdditiveMonoid[T]: AdditiveMonoid[T] =
     macro TypeClass.derive_impl[AdditiveMonoid, T]
 
-  implicit def deriveAdditiveGroup[T] =
+  implicit def deriveAdditiveGroup[T]: AdditiveGroup[T] =
     macro TypeClass.derive_impl[AdditiveGroup, T]
 
-  implicit def deriveAdditiveAbGroup[T] =
+  implicit def deriveAdditiveAbGroup[T]: AdditiveAbGroup[T] =
     macro TypeClass.derive_impl[AdditiveAbGroup, T]
 
-  implicit def deriveMultiplicativeSemigroup[T] =
+  implicit def deriveMultiplicativeSemigroup[T]: MultiplicativeSemigroup[T] =
     macro TypeClass.derive_impl[MultiplicativeSemigroup, T]
 
-  implicit def deriveMultiplicativeMonoid[T] =
+  implicit def deriveMultiplicativeMonoid[T]: MultiplicativeMonoid[T] =
     macro TypeClass.derive_impl[MultiplicativeMonoid, T]
 
-  implicit def deriveMultiplicativeGroup[T] =
+  implicit def deriveMultiplicativeGroup[T]: MultiplicativeGroup[T] =
     macro TypeClass.derive_impl[MultiplicativeGroup, T]
 
-  implicit def deriveMultiplicativeAbGroup[T] =
+  implicit def deriveMultiplicativeAbGroup[T]: MultiplicativeAbGroup[T] =
     macro TypeClass.derive_impl[MultiplicativeAbGroup, T]
 }
 
