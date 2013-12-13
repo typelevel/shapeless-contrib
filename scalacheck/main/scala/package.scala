@@ -36,7 +36,7 @@ package object scalacheck {
 
   }
 
-  implicit def deriveArbitrary[T] = macro TypeClass.derive_impl[Arbitrary, T]
+  implicit def deriveArbitrary[T]: Arbitrary[T] = macro TypeClass.derive_impl[Arbitrary, T]
 
 }
 
