@@ -48,6 +48,12 @@ class DeltaTest extends Spec with ScalazMatchers {
 
     HasInt(1).delta(HasInt(2)) must equal(1.delta(2))
   }
+
+  "create delta from function" in {
+    implicit val doubleDelta = Delta.from[Double] { case (before, after) => after - before }
+
+    1.5.delta(2.0) must equal(0.5)
+  }
 }
 
 // vim: expandtab:ts=2:sw=2

@@ -15,13 +15,15 @@ object Delta {
     def delta[Out](implicit delta: Delta[In, Out]): Delta[In, Out] = delta
   }
 
+  def from[In] = new {
+    def apply[Out](f: (In, In) => Out): Delta[In, Out] = new FunctionDelta[In, Out](f)
+  }
+
   implicit class DeltaOps[In](val before: In) extends AnyVal {
     def delta[Out](after: In)(implicit delta: Delta[In, Out]): Out = delta(before, after)
   }
 
-  implicit object deltaInt extends Delta[Int, Int] {
-    def apply(before: Int, after: Int): Int = after - before
-  }
+  implicit val deltaInt: Delta[Int, Int] = from[Int] { case (before, after) => after - before }
 
   implicit def deltaSet[A]: Delta[Set[A], SetPatch[A]] = new Delta[Set[A], SetPatch[A]] {
     def apply(before: Set[A], after: Set[A]): SetPatch[A] =
@@ -50,4 +52,7 @@ private class LensDelta[Container, In, Out](lens: Lens[Container, In], delta: De
   def apply(left: Container, right: Container): Out = delta(lens.get(left), lens.get(right))
 }
 
+private class FunctionDelta[In, Out](f: (In, In) => Out) extends Delta[In, Out] {
+  def apply(left: In, right: In): Out = f(left, right)
+}
 // vim: expandtab:ts=2:sw=2
