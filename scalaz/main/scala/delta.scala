@@ -1,11 +1,20 @@
 package shapeless.contrib.scalaz
 
+import scalaz.Lens
+
 
 trait Delta[In, Out] {
   def apply(before: In, after: In): Out
+
+  def lens[Container](lens: Lens[Container, In]): Delta[Container, Out] =
+    new LensDelta[Container, In, Out](lens, this)
 }
 
 object Delta {
+  def apply[In] = new {
+    def delta[Out](implicit delta: Delta[In, Out]): Delta[In, Out] = delta
+  }
+
   implicit class DeltaOps[In](val before: In) extends AnyVal {
     def delta[Out](after: In)(implicit delta: Delta[In, Out]): Out = delta(before, after)
   }
@@ -33,6 +42,12 @@ object Delta {
   case class SetPatch[A](added: Set[A], removed: Set[A])
 
   case class MapPatch[K, V, VOut](added: Map[K, V], removed: Map[K, V], changed: Map[K, VOut])
+}
+
+private class LensDelta[Container, In, Out](lens: Lens[Container, In], delta: Delta[In, Out])
+  extends Delta[Container, Out] {
+
+  def apply(left: Container, right: Container): Out = delta(lens.get(left), lens.get(right))
 }
 
 // vim: expandtab:ts=2:sw=2

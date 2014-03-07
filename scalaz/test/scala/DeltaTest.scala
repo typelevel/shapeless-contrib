@@ -1,6 +1,7 @@
 package shapeless.contrib.scalaz
 
 import org.specs2.scalaz.{Spec, ScalazMatchers}
+import scalaz.Lens
 
 
 class DeltaTest extends Spec with ScalazMatchers {
@@ -37,6 +38,15 @@ class DeltaTest extends Spec with ScalazMatchers {
       removed = Map("a" -> Map(1 -> 1)),
       changed = Map("b" -> expected)
     ))
+  }
+
+  "lens delta" in {
+    case class HasInt(i: Int)
+    val lens = Lens.lensu[HasInt, Int]({ case (hasInt, int) => hasInt.copy(i = int) }, _.i)
+
+    implicit val hasIntDelta = Delta[Int].delta.lens(lens)
+
+    HasInt(1).delta(HasInt(2)) must equal(1.delta(2))
   }
 }
 
