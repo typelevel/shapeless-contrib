@@ -54,6 +54,12 @@ class DeltaTest extends Spec with ScalazMatchers {
 
     1.5.delta(2.0) must equal(0.5)
   }
+
+  "can map over delta" in {
+    implicit val intDeltaAsString: Delta[Int, String] = Delta[Int].delta.map(_.toString)
+
+    1.delta[String](2) must equal("1")
+  }
 }
 
 // vim: expandtab:ts=2:sw=2

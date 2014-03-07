@@ -8,6 +8,8 @@ trait Delta[In, Out] {
 
   def lens[Container](lens: Lens[Container, In]): Delta[Container, Out] =
     new LensDelta[Container, In, Out](lens, this)
+
+  def map[B](f: Out => B): Delta[In, B] = new MappedDelta[In, Out, B](f, this)
 }
 
 object Delta {
@@ -55,4 +57,9 @@ private class LensDelta[Container, In, Out](lens: Lens[Container, In], delta: De
 private class FunctionDelta[In, Out](f: (In, In) => Out) extends Delta[In, Out] {
   def apply(left: In, right: In): Out = f(left, right)
 }
+
+private class MappedDelta[In, Out, B](f: Out => B, delta: Delta[In, Out]) extends Delta[In, B] {
+  def apply(left: In, right: In): B = f(delta(left, right))
+}
+
 // vim: expandtab:ts=2:sw=2
