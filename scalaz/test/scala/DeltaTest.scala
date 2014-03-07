@@ -5,21 +5,28 @@ import scalaz.Lens
 
 
 class DeltaTest extends Spec with ScalazMatchers {
-  import Delta._
   import scalaz.std.AllInstances._
+  import Delta._
 
   "int delta" in {
+    import Delta.std.int._
+
     2.delta(10) must equal(8)
     10.delta(2) must equal(-8)
   }
 
   "set delta" in {
+    import Delta.std.set._
+
     val expected = SetPatch(removed = Set(1), added = Set(3))
 
     Set(1, 2).delta(Set(2, 3)) must equal(expected)
   }
 
   "map delta" in {
+    import Delta.std.int._
+    import Delta.std.map._
+
     val before = Map(1 -> 1, 2 -> 2)
     val after  = Map(2 -> 22, 3 -> 3)
 
@@ -41,6 +48,8 @@ class DeltaTest extends Spec with ScalazMatchers {
   }
 
   "lens delta" in {
+    import Delta.std.int._
+
     case class HasInt(i: Int)
     val lens = Lens.lensu[HasInt, Int]({ case (hasInt, int) => hasInt.copy(i = int) }, _.i)
 
@@ -56,9 +65,9 @@ class DeltaTest extends Spec with ScalazMatchers {
   }
 
   "can map over delta" in {
-    implicit val intDeltaAsString: Delta[Int, String] = Delta[Int].delta.map(_.toString)
+    implicit val intDeltaAsString: Delta[Int, String] = Delta.std.int.deltaInt.map(_.toString)
 
-    1.delta[String](2) must equal("1")
+    1.delta(2) must equal("1")
   }
 }
 
