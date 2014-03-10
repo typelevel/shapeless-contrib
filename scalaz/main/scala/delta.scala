@@ -22,6 +22,11 @@ object Delta {
     def apply[Out](f: (In, In) => Out): Delta[In, Out] = new FunctionDelta[In, Out](f)
   }
 
+  def generic[In, Out](gen: Generic[In])(implicit genDelta: Delta[gen.Repr, Out]): Delta[In, Out] =
+    from[In].apply[Out] {
+      case (before, after) => genDelta(gen.to(before), gen.to(after))
+    }
+
   implicit class DeltaOps[In](val before: In) extends AnyVal {
     def delta[Out](after: In)(implicit delta: Delta[In, Out]): Out = delta(before, after)
   }

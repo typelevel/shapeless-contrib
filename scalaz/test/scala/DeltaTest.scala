@@ -28,30 +28,21 @@ class DeltaTest extends Spec with ScalazMatchers {
     import Delta.std.int._
     import Delta.std.map._
 
-    val before = Map(1 -> 1, 2 -> 2)
-    val after  = Map(2 -> 22, 3 -> 3)
 
-    val expected = MapPatch(
-      added   = Map(3 -> 3),
-      removed = Map(1 -> 1),
-      changed = Map(2 -> 2.delta(22))
-    )
+    beforeM.delta(afterM) must equal(expectedM)
 
-    before.delta(after) must equal(expected)
-
-    val nested = Map("a" -> Map(1 -> 1), "b" -> before).delta(Map("b" -> after, "c" -> Map(3 -> 3)))
+    val nested = Map("a" -> Map(1 -> 1), "b" -> beforeM).delta(Map("b" -> afterM, "c" -> Map(3 -> 3)))
 
     nested must equal(MapPatch(
       added   = Map("c" -> Map(3 -> 3)),
       removed = Map("a" -> Map(1 -> 1)),
-      changed = Map("b" -> expected)
+      changed = Map("b" -> expectedM)
     ))
   }
 
   "lens delta" in {
     import Delta.std.int._
 
-    case class HasInt(i: Int)
     val lens = Lens.lensu[HasInt, Int]({ case (hasInt, int) => hasInt.copy(i = int) }, _.i)
 
     implicit val hasIntDelta = Delta[Int].delta.lens(lens)
@@ -68,6 +59,23 @@ class DeltaTest extends Spec with ScalazMatchers {
     delta must equal(List(1.delta(2), 10.delta(20)))
   }
 
+  "generic delta" in {
+    import Delta.std.int._
+    import Delta.std.map._
+    import Delta.hlist._
+
+    implicit val hasIntDelta = Delta.generic(Generic[HasInt])
+
+    HasInt(1).delta(HasInt(2)).toList must equal(List(1.delta(2)))
+
+    implicit val mapAndIntDelta = Delta.generic(Generic[MapAndInt])
+
+    val actual = MapAndInt(1, beforeM).delta(MapAndInt(2, afterM))
+
+    actual.head must equal(1.delta(2))
+    actual.tail.head must equal(expectedM)
+  }
+
   "create delta from function" in {
     implicit val doubleDelta = Delta.from[Double] { case (before, after) => after - before }
 
@@ -79,6 +87,18 @@ class DeltaTest extends Spec with ScalazMatchers {
 
     1.delta(2) must equal("1")
   }
+
+  case class HasInt(i: Int)
+  case class MapAndInt(i: Int, m: Map[Int, Int])
+
+  val beforeM = Map(1 -> 1, 2 -> 2)
+  val afterM  = Map(2 -> 22, 3 -> 3)
+
+  val expectedM = Delta.std.map.MapPatch(
+    added   = Map(3 -> 3),
+    removed = Map(1 -> 1),
+    changed = Map(2 -> Delta.std.int.deltaInt(2, 22))
+  )
 }
 
 // vim: expandtab:ts=2:sw=2
