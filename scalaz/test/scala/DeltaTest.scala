@@ -2,6 +2,7 @@ package shapeless.contrib.scalaz
 
 import org.specs2.scalaz.{Spec, ScalazMatchers}
 import scalaz.Lens
+import shapeless._
 
 
 class DeltaTest extends Spec with ScalazMatchers {
@@ -56,6 +57,15 @@ class DeltaTest extends Spec with ScalazMatchers {
     implicit val hasIntDelta = Delta[Int].delta.lens(lens)
 
     HasInt(1).delta(HasInt(2)) must equal(1.delta(2))
+  }
+
+  "hlist delta" in {
+    import Delta.std.int._
+    import Delta.hlist._
+
+    val delta = (1 :: 10 :: HNil).delta(2 :: 20 :: HNil).toList
+
+    delta must equal(List(1.delta(2), 10.delta(20)))
   }
 
   "create delta from function" in {

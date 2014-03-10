@@ -1,6 +1,7 @@
 package shapeless.contrib.scalaz
 
 import scalaz.Lens
+import shapeless._
 
 
 trait Delta[In, Out] {
@@ -53,6 +54,18 @@ object Delta {
 
       case class SetPatch[A](added: Set[A], removed: Set[A])
     }
+  }
+
+  object hlist {
+    implicit object HNILDelta extends Delta[HNil, HNil] {
+      def apply(before: HNil, after: HNil): HNil = HNil
+    }
+
+    implicit def HConsDelta[H, T <: HList, Out, TOut <: HList](
+      implicit deltaH: Delta[H, Out], deltaT: Delta[T, TOut]): Delta[H :: T, Out :: TOut] =
+        from[H :: T].apply[Out :: TOut] {
+          case (before, after) => deltaH(before.head, after.head) :: deltaT(before.tail, after.tail)
+        }
   }
 }
 
