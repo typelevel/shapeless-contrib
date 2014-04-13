@@ -15,6 +15,12 @@ private trait Empty {
     override def shows(f: HNil) = "HNil"
   }
 
+  def emptyCoproduct = new Monoid[CNil] with Order[CNil] with Show[CNil] {
+    def zero = ???
+    def append(f1: CNil, f2: => CNil) = f1
+    def order(x: CNil, y: CNil) = Monoid[Ordering].zero
+  }
+
 }
 
 // Products
@@ -220,16 +226,19 @@ trait Instances {
 
   // Boilerplate
 
-  implicit def deriveSemigroup[T]: Semigroup[T] = macro TypeClass.derive_impl[Semigroup, T]
+  implicit def deriveSemigroup[T](implicit ev: ProductTypeClass[Semigroup]): Semigroup[T] =
+    macro GenericMacros.deriveProductInstance[Semigroup, T]
 
-  implicit def deriveMonoid[T]: Monoid[T] = macro TypeClass.derive_impl[Monoid, T]
+  implicit def deriveMonoid[T](implicit ev: ProductTypeClass[Monoid]): Monoid[T] =
+    macro GenericMacros.deriveProductInstance[Monoid, T]
 
-  implicit def deriveEqual[T]: Equal[T] = macro TypeClass.derive_impl[Equal, T]
+  implicit def deriveEqual[T](implicit ev: TypeClass[Equal]): Equal[T] =
+    macro GenericMacros.deriveInstance[Equal, T]
 
-  implicit def deriveShow[T]: Show[T] = macro TypeClass.derive_impl[Show, T]
+  implicit def deriveOrder[T](implicit ev: TypeClass[Order]): Order[T] =
+    macro GenericMacros.deriveInstance[Order, T]
 
-  implicit def deriveOrder[T]: Order[T] = macro TypeClass.derive_impl[Order, T]
+  implicit def deriveShow[T](implicit ev: TypeClass[Show]): Show[T] =
+    macro GenericMacros.deriveInstance[Show, T]
 
 }
-
-// vim: expandtab:ts=2:sw=2

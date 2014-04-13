@@ -144,6 +144,10 @@ object Binary extends TypeClassCompanion[Binary] {
       def right(r: R) = Inr(r)
     }
 
+    def emptyCoproduct = new Binary[CNil] {
+      def encode(cnil: CNil) = ???
+      def decode(bytes: Vector[Byte]) = ???
+    }
 
   }
 
@@ -259,5 +263,3 @@ private trait ProductBinary[P, A, B] extends Binary[P] {
     } yield (prod(a, b), r2)
 
 }
-
-// vim: expandtab:ts=2:sw=2

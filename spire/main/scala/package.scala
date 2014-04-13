@@ -110,42 +110,46 @@ package object spire {
 
   // Boilerplate
 
-  implicit def deriveEq[T]: Eq[T] = macro TypeClass.derive_impl[Eq, T]
+  implicit def deriveEq[T](implicit ev: ProductTypeClass[Eq]): Eq[T] =
+    macro GenericMacros.deriveProductInstance[Eq, T]
 
-  implicit def deriveOrder[T]: Order[T] = macro TypeClass.derive_impl[Order, T]
+  implicit def deriveOrder[T](implicit ev: ProductTypeClass[Order]): Order[T] =
+    macro GenericMacros.deriveProductInstance[Order, T]
 
-  implicit def deriveSemigroup[T]: Semigroup[T] =
-    macro TypeClass.derive_impl[Semigroup, T]
+  implicit def deriveSemigroup[T](implicit ev: ProductTypeClass[Semigroup]): Semigroup[T] =
+    macro GenericMacros.deriveProductInstance[Semigroup, T]
 
-  implicit def deriveMonoid[T]: Monoid[T] = macro TypeClass.derive_impl[Monoid, T]
+  implicit def deriveMonoid[T](implicit ev: ProductTypeClass[Monoid]): Monoid[T] =
+    macro GenericMacros.deriveProductInstance[Monoid, T]
 
-  implicit def deriveGroup[T]: Group[T] = macro TypeClass.derive_impl[Group, T]
+  implicit def deriveGroup[T](implicit ev: ProductTypeClass[Group]): Group[T] =
+    macro GenericMacros.deriveProductInstance[Group, T]
 
-  implicit def deriveAbGroup[T]: AbGroup[T] = macro TypeClass.derive_impl[AbGroup, T]
+  implicit def deriveAbGroup[T](implicit ev: ProductTypeClass[AbGroup]): AbGroup[T] =
+    macro GenericMacros.deriveProductInstance[AbGroup, T]
 
-  implicit def deriveAdditiveSemigroup[T]: AdditiveSemigroup[T] =
-    macro TypeClass.derive_impl[AdditiveSemigroup, T]
+  implicit def deriveAdditiveSemigroup[T](implicit ev: ProductTypeClass[AdditiveSemigroup]): AdditiveSemigroup[T] =
+    macro GenericMacros.deriveProductInstance[AdditiveSemigroup, T]
 
-  implicit def deriveAdditiveMonoid[T]: AdditiveMonoid[T] =
-    macro TypeClass.derive_impl[AdditiveMonoid, T]
+  implicit def deriveAdditiveMonoid[T](implicit ev: ProductTypeClass[AdditiveMonoid]): AdditiveMonoid[T] =
+    macro GenericMacros.deriveProductInstance[AdditiveMonoid, T]
 
-  implicit def deriveAdditiveGroup[T]: AdditiveGroup[T] =
-    macro TypeClass.derive_impl[AdditiveGroup, T]
+  implicit def deriveAdditiveGroup[T](implicit ev: ProductTypeClass[AdditiveGroup]): AdditiveGroup[T] =
+    macro GenericMacros.deriveProductInstance[AdditiveGroup, T]
 
-  implicit def deriveAdditiveAbGroup[T]: AdditiveAbGroup[T] =
-    macro TypeClass.derive_impl[AdditiveAbGroup, T]
+  implicit def deriveAdditiveAbGroup[T](implicit ev: ProductTypeClass[AdditiveAbGroup]): AdditiveAbGroup[T] =
+    macro GenericMacros.deriveProductInstance[AdditiveAbGroup, T]
 
-  implicit def deriveMultiplicativeSemigroup[T]: MultiplicativeSemigroup[T] =
-    macro TypeClass.derive_impl[MultiplicativeSemigroup, T]
+  implicit def deriveMultiplicativeSemigroup[T](implicit ev: ProductTypeClass[MultiplicativeSemigroup]): MultiplicativeSemigroup[T] =
+    macro GenericMacros.deriveProductInstance[MultiplicativeSemigroup, T]
 
-  implicit def deriveMultiplicativeMonoid[T]: MultiplicativeMonoid[T] =
-    macro TypeClass.derive_impl[MultiplicativeMonoid, T]
+  implicit def deriveMultiplicativeMonoid[T](implicit ev: ProductTypeClass[MultiplicativeMonoid]): MultiplicativeMonoid[T] =
+    macro GenericMacros.deriveProductInstance[MultiplicativeMonoid, T]
 
-  implicit def deriveMultiplicativeGroup[T]: MultiplicativeGroup[T] =
-    macro TypeClass.derive_impl[MultiplicativeGroup, T]
+  implicit def deriveMultiplicativeGroup[T](implicit ev: ProductTypeClass[MultiplicativeGroup]): MultiplicativeGroup[T] =
+    macro GenericMacros.deriveProductInstance[MultiplicativeGroup, T]
 
-  implicit def deriveMultiplicativeAbGroup[T]: MultiplicativeAbGroup[T] =
-    macro TypeClass.derive_impl[MultiplicativeAbGroup, T]
+  implicit def deriveMultiplicativeAbGroup[T](implicit ev: ProductTypeClass[MultiplicativeAbGroup]): MultiplicativeAbGroup[T] =
+    macro GenericMacros.deriveProductInstance[MultiplicativeAbGroup, T]
+
 }
-
-// vim: expandtab:ts=2:sw=2

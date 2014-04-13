@@ -11,8 +11,8 @@ import com.typesafe.sbt.pgp.PgpKeys._
 
 object ShapelessContribBuild extends Build {
 
-  val shapelessVersion = "2.0.0-SNAPSHOT"
-  val scalazVersion = "7.0.3"
+  val shapelessVersion = "2.0.0"
+  val scalazVersion = "7.0.6"
   val scalacheckVersion = "1.10.0"
 
 
@@ -38,14 +38,13 @@ object ShapelessContribBuild extends Build {
     licenses := Seq("MIT" → url("http://www.opensource.org/licenses/mit-license.php")),
     homepage := Some(url("http://typelevel.org/")),
 
-    scalaVersion := "2.10.3",
-    scalacOptions ++= Seq("-unchecked", "-deprecation"),
+    scalaVersion := "2.10.4",
+    scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:experimental.macros"),
 
-    libraryDependencies +=
+    libraryDependencies ++= Seq(
       "com.chuusai" %% "shapeless" % shapelessVersion cross CrossVersion.full,
-
-    resolvers += Resolver.sonatypeRepo("releases"),
-    resolvers += Resolver.sonatypeRepo("snapshots"),
+      "org.scala-lang" % "scala-reflect" % scalaVersion.value
+    ),
 
     sourceDirectory <<= baseDirectory(identity),
 
@@ -91,8 +90,6 @@ object ShapelessContribBuild extends Build {
     )
   )
 
-  lazy val hasMacros = (scalacOptions += "-language:experimental.macros")
-
   lazy val shapelessContrib = Project(
     id = "shapeless-contrib",
     base = file("."),
@@ -115,7 +112,6 @@ object ShapelessContribBuild extends Build {
     base = file("scalacheck"),
     settings = standardSettings ++ Seq(
       name := "shapeless-scalacheck",
-      hasMacros,
       libraryDependencies ++= Seq(
         "org.scalacheck" %% "scalacheck" % scalacheckVersion
       )
@@ -128,7 +124,6 @@ object ShapelessContribBuild extends Build {
     dependencies = Seq(common, scalacheck % "test"),
     settings = standardSettings ++ Seq(
       name := "shapeless-scalaz",
-      hasMacros,
       libraryDependencies ++= Seq(
         "org.scalaz" %% "scalaz-core" % scalazVersion,
 
@@ -146,7 +141,6 @@ object ShapelessContribBuild extends Build {
     dependencies = Seq(common, scalacheck % "test"),
     settings = standardSettings ++ Seq(
       name := "shapeless-spire",
-      hasMacros,
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "1.9.1" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
@@ -157,5 +151,3 @@ object ShapelessContribBuild extends Build {
   )
 
 }
-
-// vim: expandtab:ts=2:sw=2

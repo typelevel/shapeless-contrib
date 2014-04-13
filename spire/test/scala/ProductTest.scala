@@ -20,5 +20,3 @@ class ProductTest extends LawChecker {
   checkAll("two elements", RingLaws[OneElem].multiplicativeSemigroup)
 
 }
-
-// vim: expandtab:ts=2:sw=2

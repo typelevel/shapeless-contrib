@@ -6,6 +6,9 @@ import org.scalacheck.{Gen, Arbitrary}
 
 package object scalacheck {
 
+  // TODO this is terrible
+  private lazy val _emptyCoproduct: Gen[Nothing] = Gen(_ => None)
+
   implicit def ArbitraryI: TypeClass[Arbitrary] = new TypeClass[Arbitrary] {
 
     def emptyProduct = Arbitrary(Gen.value(HNil))
@@ -23,21 +26,21 @@ package object scalacheck {
         }})
 
     def coproduct[L, R <: Coproduct](l: => Arbitrary[L], r: => Arbitrary[R]) = {
-      lazy val mappedL = l.arbitrary.map(Inl(_): L :+: R)
-      lazy val mappedR = r.arbitrary.map(Inr(_): L :+: R)
-      Arbitrary(for {
-        which <- Gen.oneOf(false, true)
-        result <- if (which) mappedL else mappedR
-      } yield result)
+      val gens: List[Gen[L :+: R]] =
+        (if (l.arbitrary == _emptyCoproduct) Nil else List(l.arbitrary.map(Inl(_): L :+: R))) ++
+        (if (r.arbitrary == _emptyCoproduct) Nil else List(r.arbitrary.map(Inr(_): L :+: R)))
+      Arbitrary(Gen.oneOf(gens).flatMap(identity))
     }
+
+    def emptyCoproduct =
+      Arbitrary(_emptyCoproduct)
 
     def project[A, B](b: => Arbitrary[B], ab: A => B, ba: B => A) =
       Arbitrary(b.arbitrary.map(ba))
 
   }
 
-  implicit def deriveArbitrary[T]: Arbitrary[T] = macro TypeClass.derive_impl[Arbitrary, T]
+  implicit def deriveArbitrary[T](implicit ev: TypeClass[Arbitrary]): Arbitrary[T] =
+    macro GenericMacros.deriveInstance[Arbitrary, T]
 
 }
-
-// vim: expandtab:ts=2:sw=2
