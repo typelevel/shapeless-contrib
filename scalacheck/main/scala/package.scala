@@ -18,17 +18,17 @@ package object scalacheck {
         if (size == 0)
           Gen.fail
         else {
-          val half = size.abs/2
-          val resizedH = Gen.resize(half, h.arbitrary)
-          val resizedT = Gen.resize(half, t.arbitrary)
+          val resizedH = Gen.resize(size.abs, h.arbitrary)
+          val resizedT = Gen.resize(size.abs/2, t.arbitrary)
           for { h <- resizedH; t <- resizedT }
             yield h :: t
         }})
 
     def coproduct[L, R <: Coproduct](l: => Arbitrary[L], r: => Arbitrary[R]) = {
+      val rGen = r.arbitrary
       val gens: List[Gen[L :+: R]] =
-        (if (l.arbitrary == _emptyCoproduct) Nil else List(l.arbitrary.map(Inl(_): L :+: R))) ++
-        (if (r.arbitrary == _emptyCoproduct) Nil else List(r.arbitrary.map(Inr(_): L :+: R)))
+        l.arbitrary.map(Inl(_): L :+: R) ::
+        (if (rGen == _emptyCoproduct) Nil else List(rGen.map(Inr(_): L :+: R)))
       Arbitrary(Gen.oneOf(gens).flatMap(identity))
     }
 
