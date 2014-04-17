@@ -7,7 +7,11 @@ import spire.std.int._
 import spire.std.long._
 import spire.laws._
 
-class ProductTest extends LawChecker {
+import org.typelevel.discipline.scalatest.Discipline
+
+import org.scalatest.FunSuite
+
+class ProductTest extends FunSuite with Discipline {
 
   case class OneElem(n: Int)
 
