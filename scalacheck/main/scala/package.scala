@@ -18,8 +18,8 @@ package object scalacheck {
         if (size == 0)
           Gen.fail
         else {
-          val resizedH = Gen.resize(size.abs, h.arbitrary)
-          val resizedT = Gen.resize(size.abs/2, t.arbitrary)
+          val resizedH = Gen.resize(size.abs/2, h.arbitrary)
+          val resizedT = Gen.resize(size.abs - size.abs/2, t.arbitrary)
           for { h <- resizedH; t <- resizedT }
             yield h :: t
         }})

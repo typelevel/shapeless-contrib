@@ -13,7 +13,7 @@ object ShapelessContribBuild extends Build {
 
   val shapelessVersion = "2.0.0"
   val scalazVersion = "7.0.6"
-  val scalacheckVersion = "1.10.0"
+  val scalacheckVersion = "1.10.1"
 
 
   lazy val publishSignedArtifacts = ReleaseStep(
