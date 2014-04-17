@@ -15,19 +15,19 @@ To use the latest version, include the following in your `build.sbt`:
 
 ```scala
 libraryDependencies ++= Seq(
-  "org.typelevel" %% "shapeless-scalacheck" % "0.1.2",
-  "org.typelevel" %% "shapeless-spire" % "0.1.2",
-  "org.typelevel" %% "shapeless-scalaz" % "0.1.2"
+  "org.typelevel" %% "shapeless-scalacheck" % "0.2",
+  "org.typelevel" %% "shapeless-spire" % "0.2",
+  "org.typelevel" %% "shapeless-scalaz" % "0.2"
 )
 ```
 
-Some features are only available in the snapshot version (`0.2-SNAPSHOT`).
+Some features are only available in the snapshot version (`0.3-SNAPSHOT`).
 
 
 What does this library do?
 --------------------------
 
-`shapeless-contrib` aims to provide smooth interoperability between [Shapeless](https://github.com/milessabin/shapeless), [Scalaz](https://github.com/scalaz/scalaz) and [Spire](https://github.com/non/spire). At the moment, this means automatic derivation of type class instances for case classes. Stay tuned for further developments.
+`shapeless-contrib` aims to provide smooth interoperability between [Shapeless](https://github.com/milessabin/shapeless), [Scalaz](https://github.com/scalaz/scalaz) and [Spire](https://github.com/non/spire). The most prominent feature is automatic derivation of type class instances for case classes, but there is more. If you've got a cool idea for more stuff, please open an issue.
 
 
 Examples
@@ -35,7 +35,7 @@ Examples
 
 ### Scalaz + Shapeless = Profit
 
-_Note:_ The 0.1.x series of this library depends on shapeless 1.2.x, whereas the newer 0.2.x series depends on shapeless 2.0.0.
+_Note:_ The current 0.2.x series depends on shapeless 2.0.0.
 
 The combination of these two libraries allows for some nifty utility functions related to `scalaz.Applicative`:
 
@@ -46,6 +46,7 @@ The combination of these two libraries allows for some nifty utility functions r
 import shapeless._
 import shapeless.contrib.scalaz._
 
+import scalaz.Applicative
 import scalaz.std.option._
 
 // define a function with arbitrarily many parameters
@@ -81,14 +82,12 @@ In addition to that, it also provides a conversion between their lens types:
 
 ```scala
 import shapeless._
-import shapeless.Nat._
 import shapeless.contrib.scalaz._
 
 case class TwoElem(n: Int, x: String)
-implicit def TwoIso = Iso.hlist(TwoElem.apply _, TwoElem.unapply _)
 
 // Generate a `shapeless.Lens`
-val sLens = Lens[TwoElem] >> _0
+val sLens = lens[TwoElem] >> 'n
 
 // Convert it to a `scalaz.Lens`
 val zsLens = sLens.asScalaz
@@ -124,13 +123,9 @@ This will work nicely for that particular case. However, it requires repetition:
 ```scala
 import spire.implicits._
 import shapeless.contrib.spire._
-import shapeless.Iso
 
 // Define the `Vector3` case class without any operations
 case class Vector3(x: Int, y: Int, z: Int)
-
-// Invoke shapeless machinery
-implicit val v3iso = Iso.hlist(Vector3.apply _, Vector3.unapply _)
 
 // That's it! `Vector3` is an `AdditiveMonoid` now.
 Vector3(1, 2, 3) + Vector3(-1, 3, 0)
