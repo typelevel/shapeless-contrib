@@ -66,10 +66,30 @@ object Delta {
       def apply(before: HNil, after: HNil): HNil = HNil
     }
 
+    trait DeltaAux[In] {
+      type Out
+
+      def apply(before: In, after: In): Out
+    }
+
+    implicit def deltaToAux[In, Out0](implicit delta: Delta[In, Out0]) = new DeltaAux[In] {
+      type Out = Out0
+
+      def apply(before: In, after: In): Out = delta(before, after)
+    }
+
+    object deltaPoly extends Poly2 {
+      implicit def delta[In](implicit delta: DeltaAux[In]) = at[In, In] {
+        case (before, after) => delta(before, after)
+      }
+    }
+
     implicit def HConsDelta[H, T <: HList, Out, TOut <: HList](
       implicit deltaH: Delta[H, Out], deltaT: Delta[T, TOut]): Delta[H :: T, Out :: TOut] =
-        from[H :: T].apply[Out :: TOut] {
-          case (before, after) => deltaH(before.head, after.head) :: deltaT(before.tail, after.tail)
+        new Delta[H :: T, Out :: TOut] {
+          def apply(before: H :: T, after: H :: T): Out :: TOut = {
+            deltaH(before.head, after.head) :: deltaT(before.tail, after.tail)
+          }
         }
   }
 }

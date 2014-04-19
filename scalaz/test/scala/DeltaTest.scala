@@ -57,6 +57,10 @@ class DeltaTest extends Spec with ScalazMatchers {
     val delta = (1 :: 10 :: HNil).delta(2 :: 20 :: HNil).toList
 
     delta must equal(List(1.delta(2), 10.delta(20)))
+
+    val result = (1 :: 10 :: HNil).zipWith(2 :: 20 :: HNil)(deltaPoly).toList
+
+    result must equal(List(1.delta(2), 10.delta(20)))
   }
 
   "generic delta" in {
