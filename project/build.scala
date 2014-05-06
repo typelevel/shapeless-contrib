@@ -12,8 +12,8 @@ import com.typesafe.sbt.pgp.PgpKeys._
 object ShapelessContribBuild extends Build {
 
   val shapelessVersion = "1.2.4"
-  val scalazVersion = "7.0.3"
-  val scalacheckVersion = "1.10.0"
+  val scalazVersion = "7.0.6"
+  val scalacheckVersion = "1.11.3"
 
 
   lazy val publishSignedArtifacts = ReleaseStep(
@@ -38,7 +38,7 @@ object ShapelessContribBuild extends Build {
     licenses := Seq("MIT" → url("http://www.opensource.org/licenses/mit-license.php")),
     homepage := Some(url("http://typelevel.org/")),
 
-    scalaVersion := "2.10.2",
+    scalaVersion := "2.11.0",
     scalacOptions ++= Seq("-unchecked", "-deprecation"),
 
     libraryDependencies += "com.chuusai" %% "shapeless" % shapelessVersion,
@@ -128,10 +128,10 @@ object ShapelessContribBuild extends Build {
       libraryDependencies ++= Seq(
         "org.scalaz" %% "scalaz-core" % scalazVersion,
 
-        "org.specs2" %% "specs2" % "1.12.3" % "test",
+        "org.specs2" %% "specs2" % "2.3.11" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
         "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
-        "org.typelevel" %% "scalaz-specs2" % "0.1.5" % "test"
+        "org.typelevel" %% "scalaz-specs2" % "0.2" % "test"
       )
     )
   )
@@ -143,10 +143,10 @@ object ShapelessContribBuild extends Build {
     settings = standardSettings ++ Seq(
       name := "shapeless-spire",
       libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "1.9.1" % "test",
+        "org.scalatest" %% "scalatest" % "2.1.3" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
-        "org.spire-math" %% "spire" % "0.6.1",
-        "org.spire-math" %% "spire-scalacheck-binding" % "0.6.1" % "test"
+        "org.spire-math" %% "spire" % "0.7.4",
+        "org.spire-math" %% "spire-scalacheck-binding" % "0.7.4" % "test"
       )
     )
   )

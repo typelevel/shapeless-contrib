@@ -4,7 +4,7 @@ import shapeless._
 import shapeless.Poly._
 
 import scalaz.Applicative
-
+/*
 sealed trait TraverserAux[I <: HList, P, F[_], O <: HList] {
   def apply(in: I): F[O]
 }
@@ -40,5 +40,5 @@ trait TraverseFunctions {
     traverser(in)
 
 }
-
+*/
 // vim: expandtab:ts=2:sw=2

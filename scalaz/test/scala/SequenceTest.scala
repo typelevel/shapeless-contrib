@@ -21,6 +21,10 @@ class SequenceTest extends Spec {
     sequence(x :: y :: z :: HNil) must_== ((x |@| y |@| z) { _ :: _ :: _ :: HNil })
   }
 
+  "sequencing \\/" ! prop { (x: String \/ Int, y: String \/ String, z: String \/ Float) =>
+    sequence(x :: y :: z :: HNil) must_== ((x |@| y |@| z) { _ :: _ :: _ :: HNil })
+  }
+
 }
 
 // vim: expandtab:ts=2:sw=2

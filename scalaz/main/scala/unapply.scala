@@ -1,7 +1,7 @@
 package shapeless.contrib.scalaz
 
 import scalaz._
-
+/*
 // this should go into scalaz proper, once codegen for Unapply is in place
 trait UnapplyAux[TC[_[_]], FA, F[_], A] {
   def TC: TC[F]
@@ -13,6 +13,6 @@ object UnapplyAux {
     def TC = ev.TC
     def apply(fa: FA) = ev(fa)
   }
-}
+}*/
 
 // vim: expandtab:ts=2:sw=2
