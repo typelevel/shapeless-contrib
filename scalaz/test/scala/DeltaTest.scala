@@ -1,8 +1,10 @@
 package shapeless.contrib.scalaz
 
 import org.specs2.scalaz.{Spec, ScalazMatchers}
-import scalaz.Lens
+import scalaz.{Equal, Lens, Show, \/}
 import shapeless._
+
+import scalaz.std.either._
 
 
 class DeltaTest extends Spec with ScalazMatchers {
@@ -14,6 +16,46 @@ class DeltaTest extends Spec with ScalazMatchers {
 
     2.delta(10) must equal(8)
     10.delta(2) must equal(-8)
+  }
+
+  "either delta" in {
+    import Delta.std.int._
+    import Delta.std.either._
+
+    type E  = Either[Int, Int]
+    type EP = EitherPatch[Int, Int, Int, Int]
+
+    def left(l: Int): E = Left(l)
+    def right(r: Int): E = Right(r)
+    def bothLeft(out: Int): EP = BothLeft[Int](out)
+    def bothRight(out: Int): EP = BothRight[Int](out)
+    def wasLeft(l: Int, r: Int): EP = WasLeft[Int, Int](l, r)
+    def wasRight(r: Int, l: Int): EP = WasRight[Int, Int](r, l)
+
+    left(2).delta(left(10))   must equal(bothLeft(8))
+    right(2).delta(right(10)) must equal(bothRight(8))
+    left(2).delta(right(10))  must equal(wasLeft(2, 10))
+    right(2).delta(left(10))  must equal(wasRight(2, 10))
+  }
+
+  "\\/ delta" in {
+    import Delta.std.int._
+    import Delta.std.either._
+
+    type E  = \/[Int, Int]
+    type EP = EitherPatch[Int, Int, Int, Int]
+
+    def left(l: Int): E = \/.left[Int, Int](l)
+    def right(r: Int): E = \/.right[Int, Int](r)
+    def bothLeft(out: Int): EP = BothLeft[Int](out)
+    def bothRight(out: Int): EP = BothRight[Int](out)
+    def wasLeft(l: Int, r: Int): EP = WasLeft[Int, Int](l, r)
+    def wasRight(r: Int, l: Int): EP = WasRight[Int, Int](r, l)
+
+    left(2).delta(left(10))   must equal(bothLeft(8))
+    right(2).delta(right(10)) must equal(bothRight(8))
+    left(2).delta(right(10))  must equal(wasLeft(2, 10))
+    right(2).delta(left(10))  must equal(wasRight(2, 10))
   }
 
   "set delta" in {
@@ -103,6 +145,41 @@ class DeltaTest extends Spec with ScalazMatchers {
     removed = Map(1 -> 1),
     changed = Map(2 -> Delta.std.int.deltaInt(2, 22))
   )
+
+  import Delta.std.either._
+
+  implicit def eitherPatchEqual[L, R, LOut, ROut](
+    implicit lEqual: Equal[L], rEqual: Equal[R], loutEqual: Equal[LOut], routEqual: Equal[ROut]
+  ): Equal[EitherPatch[L, R, LOut, ROut]] = new Equal[EitherPatch[L, R, LOut, ROut]] {
+    type EP = EitherPatch[L, R, LOut, ROut]
+
+    def equal(before: EP, after: EP): Boolean = (before, after) match {
+      case (BothLeft(blBefore), BothLeft(blAfter)) => {
+        loutEqual.equal(blBefore, blAfter)
+      }
+      case (BothRight(brBefore), BothRight(brAfter)) => {
+        routEqual.equal(brBefore, brAfter)
+      }
+      case (WasLeft(lBefore, rBefore), WasLeft(lAfter, rAfter)) => {
+        lEqual.equal(lBefore, lAfter) && rEqual.equal(rBefore, rAfter)
+      }
+      case (WasRight(rBefore, lBefore), WasRight(rAfter, lAfter)) => {
+        rEqual.equal(rBefore, rAfter) && lEqual.equal(lBefore, lAfter)
+      }
+      case _ => false
+    }
+  }
+
+  implicit def eitherPatchShow[L, R, LOut, ROut](
+    implicit lshow: Show[L], rshow: Show[R], loutShow: Show[LOut], routShow: Show[ROut]
+  ): Show[EitherPatch[L, R, LOut, ROut]] = new Show[EitherPatch[L, R, LOut, ROut]] {
+    override def shows(in: EitherPatch[L, R, LOut, ROut]): String = in match {
+      case BothLeft(out)         => s"BothLeft(${loutShow.show(out)})"
+      case BothRight(out)        => s"BothRight(${routShow.show(out)})"
+      case WasLeft(left, right)  => s"WasLeft(${lshow.show(left)}, ${rshow.show(right)})"
+      case WasRight(right, left) => s"WasRight(${rshow.show(right)}, S{lshow.show(left)})"
+    }
+  }
 }
 
 // vim: expandtab:ts=2:sw=2

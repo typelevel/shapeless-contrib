@@ -1,6 +1,6 @@
 package shapeless.contrib.scalaz
 
-import scalaz.Lens
+import scalaz.{Equal, Lens, Show, \/, -\/, \/-}
 import shapeless._
 
 
@@ -34,6 +34,44 @@ object Delta {
   object std {
     object int {
       implicit val deltaInt: Delta[Int, Int] = Delta.from[Int] { case (before, after) => after - before }
+    }
+
+    object either {
+      implicit def deltaEither[L, R, LOut, ROut](
+        implicit ldelta: Delta[L, LOut], rdelta: Delta[R, ROut]
+      ): Delta[Either[L, R], EitherPatch[L, R, LOut, ROut]] = {
+        new Delta[Either[L, R], EitherPatch[L, R, LOut, ROut]] {
+          def apply(before: Either[L, R], after: Either[L, R]): EitherPatch[L, R, LOut, ROut] = {
+            (before, after) match {
+              case (Left(before),  Left(after))  => BothLeft[LOut](ldelta(before, after))
+              case (Right(before), Right(after)) => BothRight[ROut](rdelta(before, after))
+              case (Left(before),  Right(after)) => WasLeft(before, after)
+              case (Right(before), Left(after))  => WasRight(before, after)
+            }
+          }
+        }
+      }
+
+      implicit def deltaV[L, R, LOut, ROut](
+        implicit ldelta: Delta[L, LOut], rdelta: Delta[R, ROut]
+      ): Delta[\/[L, R], EitherPatch[L, R, LOut, ROut]] = {
+        new Delta[L \/ R, EitherPatch[L, R, LOut, ROut]] {
+          def apply(before: L \/ R, after: L \/ R): EitherPatch[L, R, LOut, ROut] = {
+            (before, after) match {
+              case (-\/(before), -\/(after)) => BothLeft[LOut](ldelta(before, after))
+              case (\/-(before), \/-(after)) => BothRight[ROut](rdelta(before, after))
+              case (-\/(before), \/-(after)) => WasLeft(before, after)
+              case (\/-(before), -\/(after)) => WasRight(before, after)
+            }
+          }
+        }
+      }
+
+      trait EitherPatch[+L, +R, +LOut, +ROut]
+      case class BothLeft[LOut](out: LOut) extends EitherPatch[Nothing, Nothing, LOut, Nothing]
+      case class BothRight[ROut](out: ROut) extends EitherPatch[Nothing, Nothing, Nothing, ROut]
+      case class WasLeft[L, R](left: L, right: R) extends EitherPatch[L, R, Nothing, Nothing]
+      case class WasRight[L, R](right: R, left: L) extends EitherPatch[L, R, Nothing, Nothing]
     }
 
     object map {
