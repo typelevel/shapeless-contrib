@@ -3,3 +3,5 @@ scala:
   - 2.10.4
 jdk:
   - oraclejdk7
+notifications:
+  irc: "chat.freenode.net#shapeless"
