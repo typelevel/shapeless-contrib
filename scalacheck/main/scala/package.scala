@@ -2,7 +2,7 @@ package shapeless.contrib
 
 import shapeless._
 
-import org.scalacheck.{Gen, Arbitrary}
+import org.scalacheck.{Gen, Arbitrary, Shrink}
 
 package object scalacheck {
 
@@ -40,7 +40,34 @@ package object scalacheck {
 
   }
 
+  implicit def ShrinkI: TypeClass[Shrink] = new TypeClass[Shrink] {
+
+    def emptyProduct = Shrink(_ => Stream.empty)
+
+    def product[F, T <: HList](f: Shrink[F], t: Shrink[T]) = Shrink { case a :: b ⇒
+      f.shrink(a).map( _ :: b) append
+      t.shrink(b).map(a :: _)
+    }
+
+    def project[A, B](b: => Shrink[B], ab: A => B, ba: B => A) = Shrink { a =>
+      b.shrink(ab(a)).map(ba)
+    }
+
+    def coproduct[L, R <: Coproduct](sl: => Shrink[L], sr: => Shrink[R]) = Shrink { lr =>
+      lr match {
+        case Inl(l) ⇒ sl.shrink(l).map(Inl.apply)
+        case Inr(r) ⇒ sr.shrink(r).map(Inr.apply)
+      }
+    }
+
+    def emptyCoproduct: Shrink[CNil] = Shrink(_ => Stream.empty)
+
+  }
+
   implicit def deriveArbitrary[T](implicit ev: TypeClass[Arbitrary]): Arbitrary[T] =
     macro GenericMacros.deriveInstance[Arbitrary, T]
 
+
+  implicit def deriveShrink[T](implicit ev: TypeClass[Shrink]): Shrink[T] =
+    macro GenericMacros.deriveInstance[Shrink, T]
 }
