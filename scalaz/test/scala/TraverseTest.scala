@@ -23,7 +23,6 @@ class TraverseTest extends Spec {
     implicit def caseOption[T] = at[Option[T]](optToValidation)
   }
 
-  /*
   "traversing Set with Set => Option" ! prop { (x: Set[Int], y: Set[String], z: Set[Float]) =>
     traverse(x :: y :: z :: HNil)(headOption) must_== ((x.headOption |@| y.headOption |@| z.headOption) { _ :: _ :: _ :: HNil })
   }
@@ -32,5 +31,4 @@ class TraverseTest extends Spec {
     traverse(x :: y :: z :: HNil)(optionToValidation) must_==
       ((optToValidation(x) |@| optToValidation(y) |@| optToValidation(z)) { _ :: _ :: _ :: HNil })
   }
-  */
 }
