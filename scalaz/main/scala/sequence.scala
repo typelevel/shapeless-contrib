@@ -5,61 +5,69 @@ import shapeless._
 import scalaz._
 import scalaz.syntax.apply._
 
-// inspired by Travis Brown and Michael Pilquist
-// <http://stackoverflow.com/a/16128064>
-sealed trait Sequencer[I <: HList] {
-  type FOut[x]
-  type Out <: HList
-  def apply(in: I): FOut[Out]
+trait Apply2[FH, OutT] {
+  type Out
+  def apply(fh: FH, outT: OutT): Out
 }
 
-trait Sequencer0 {
+object Apply2 {
+  type Aux[FH, OutT, Out0] = Apply2[FH, OutT] { type Out = Out0 }
 
-  type Aux[F[_], I <: HList, O <: HList] = Sequencer[I] { type Out = O; type FOut[x] = F[x] }
-
-  type UnapplyAux[TC[_[_]], MA, M0[_], A0] = Unapply[TC, MA] { type M[x] = M0[x]; type A = A0 }
-
-  // Here be dragons
-  // Trust me, you don't want to know
-  implicit def consSequencerAux[G[_], GH, H, T <: HList, O <: HList](
-    implicit ev1: UnapplyAux[Apply, GH, G, H],
-             seq: Sequencer.Aux[G, T, O]
-  ): Aux[G, GH :: T, H :: O] = new Sequencer[GH :: T] {
-    type FOut[x] = G[x]
-    type Out = H :: O
-    def apply(in: GH :: T) = in match {
-      case head :: tail =>
-        ev1.TC.apply2(ev1(head), seq(tail)) { _ :: _ }
+  implicit def apply2[F[_], H, T <: HList]
+    (implicit
+      app: Apply[F]
+    ): Aux[F[H], F[T], F[H :: T]] =
+    new Apply2[F[H], F[T]] {
+      type Out = F[H :: T]
+      def apply(fh: F[H], outT: F[T]): Out = app.apply2(fh, outT) { _ :: _ }
     }
-  }
 
+  implicit def apply2a[F[_, _], A, H, T <: HList]
+    (implicit
+      app: Apply[({ type λ[x] = F[A, x] })#λ]
+    ): Aux[F[A, H], F[A, T], F[A, H :: T]] =
+    new Apply2[F[A, H], F[A, T]] {
+      type Out = F[A, H :: T]
+      def apply(fh: F[A, H], outT: F[A, T]): Out = app.apply2(fh, outT) { _ :: _ }
+    }
 }
 
-object Sequencer extends Sequencer0 {
+trait Sequencer[L <: HList] {
+  type Out
+  def apply(in: L): Out
+}
 
-  implicit def nilSequencerAux[F[_] : Applicative]: Aux[F, HNil, HNil] = new Sequencer[HNil] {
-    type FOut[x] = F[x]
-    type Out = HNil
-    def apply(in: HNil) =
-      Applicative[F].pure(HNil: HNil)
-  }
+trait LowPrioritySequencer {
+  type Aux[L <: HList, Out0] = Sequencer[L] { type Out = Out0 }
 
-  implicit def singleSequencerAux[FA](implicit ev: Unapply[Functor, FA]): Aux[ev.M, FA :: HNil, ev.A :: HNil] = new Sequencer[FA :: HNil] {
-    type Out = ev.A :: HNil
-    type FOut[x] = ev.M[x]
-    def apply(in: FA :: HNil) = in match {
-      case fa :: _ =>
-        ev.TC.map(ev(fa)) { _ :: HNil }
+  implicit def consSequencerAux[FH, FT <: HList, OutT]
+    (implicit
+      st: Aux[FT, OutT],
+      ap: Apply2[FH, OutT]
+    ): Aux[FH :: FT, ap.Out] =
+      new Sequencer[FH :: FT] {
+        type Out = ap.Out
+        def apply(in: FH :: FT): Out = ap(in.head, st(in.tail)) // un.TC.apply2(un(in.head), st(in.tail)) { _ :: _ }
+      }
+}
+
+object Sequencer extends LowPrioritySequencer {
+  implicit def nilSequencerAux[F[_]: Applicative]: Aux[HNil, F[HNil]] =
+    new Sequencer[HNil] {
+      type Out = F[HNil]
+      def apply(in: HNil): F[HNil] = Applicative[F].pure(HNil: HNil)
     }
-  }
 
+  implicit def singleSequencerAux[FH]
+    (implicit
+      un: Unapply[Functor, FH]
+    ): Aux[FH :: HNil, un.M[un.A :: HNil]] =
+      new Sequencer[FH :: HNil] {
+        type Out = un.M[un.A :: HNil]
+        def apply(in: FH :: HNil): Out = un.TC.map(un(in.head)) { _ :: HNil }
+      }
 }
 
 trait SequenceFunctions {
-
-  def sequence[I <: HList](in: I)(implicit sequencer: Sequencer[I]): sequencer.FOut[sequencer.Out] =
-    sequencer(in)
-
+  def sequence[L <: HList](in: L)(implicit seq: Sequencer[L]): seq.Out = seq(in)
 }
-
-// vim: expandtab:ts=2:sw=2

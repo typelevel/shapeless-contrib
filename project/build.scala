@@ -38,7 +38,7 @@ object ShapelessContribBuild extends Build {
     licenses := Seq("MIT" → url("http://www.opensource.org/licenses/mit-license.php")),
     homepage := Some(url("http://typelevel.org/")),
 
-    scalaVersion := "2.11.0",
+    scalaVersion := "2.11.1",
     scalacOptions ++= Seq("-unchecked", "-deprecation"),
 
     libraryDependencies += "com.chuusai" %% "shapeless" % shapelessVersion,
