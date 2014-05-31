@@ -33,24 +33,24 @@ class CofreeTest extends Spec with ScalazMatchers{
 
   implicit def treeShow[A: Show]: Show[Tree[A]] = Show.showA
 
-  checkAll(order.laws[Cofree[Option, Int]])
-  checkAll(order.laws[Cofree[List, Int]])
+  //checkAll(order.laws[Cofree[Option, Int]])
+  //checkAll(order.laws[Cofree[List, Int]])
 
-  "treeCofreeListIso" ! prop{ (a: Tree[Int], b: Cofree[List, Int]) =>
+  /*"treeCofreeListIso" ! prop{ (a: Tree[Int], b: Cofree[List, Int]) =>
     treeCofreeListIso.from(treeCofreeListIso.to(a)) must equal(a)
     treeCofreeListIso.to(treeCofreeListIso.from(b)) must equal(b)
-  }
+  }*/
 
-  "Equal[Cofree[List, Int]] is Equal[Tree[Int]]" ! prop{ (a: Cofree[List, Int], b: Cofree[List, Int]) =>
+  /*"Equal[Cofree[List, Int]] is Equal[Tree[Int]]" ! prop{ (a: Cofree[List, Int], b: Cofree[List, Int]) =>
     Equal[Cofree[List, Int]].equal(a, b) must_== Equal[Tree[Int]].equal(treeCofreeListIso.from(a), treeCofreeListIso.from(b))
-  }
+  }*/
 
-  "Order[Cofree[Option, Int]] is Order[List[Int]]" ! prop{ (a: Cofree[Option, Int], b: Cofree[Option, Int]) =>
+  /*"Order[Cofree[Option, Int]] is Order[List[Int]]" ! prop{ (a: Cofree[Option, Int], b: Cofree[Option, Int]) =>
     val aa = a.toList
     val bb = b.toList
     Equal[Cofree[Option, Int]].equal(a, b) must_== Equal[List[Int]].equal(aa, bb)
     Order[Cofree[Option, Int]].order(a, b) must_== Order[List[Int]].order(aa, bb)
-  }
+  }*/
 
   "Show[Cofree[Option, Int]]" ! prop{ a: Cofree[Option, Int] =>
     Show[Cofree[Option, Int]].shows(a) must_== a.toString

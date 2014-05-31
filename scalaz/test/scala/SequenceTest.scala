@@ -17,10 +17,11 @@ class SequenceTest extends Spec {
     sequence(x :: y :: z :: HNil) must_== ((x |@| y |@| z) { _ :: _ :: _ :: HNil })
   }
 
-  "sequencing Validation" ! prop { (x: ValidationNel[String, Int], y: ValidationNel[String, String], z: ValidationNel[String, Float]) =>
+  "sequencing Validation" ! prop { (x: Validation[String, Int], y: Validation[String, String], z: Validation[String, Float]) =>
     sequence(x :: y :: z :: HNil) must_== ((x |@| y |@| z) { _ :: _ :: _ :: HNil })
   }
 
+/*
   "sequencing Kleisli" ! prop { (x: Kleisli[Option, Int, String], y: Kleisli[Option, Int, Boolean], z: Kleisli[Option, Int, String], i: Int) =>
     sequence(x :: y :: z :: HNil).apply(i) must_== (((x |@| y |@| z) { _ :: _ :: _ :: HNil }).apply(i))
   }
@@ -29,6 +30,11 @@ class SequenceTest extends Spec {
 
   "sequencing Kleisli of ValidationNel" ! prop { (x: Kleisli[ErrorsOr, Int, String], y: Kleisli[ErrorsOr, Int, Boolean], z: Kleisli[ErrorsOr, Int, String], i: Int) =>
     sequence(x :: y :: z :: HNil).apply(i) must_== (((x |@| y |@| z) { _ :: _ :: _ :: HNil }).apply(i))
+  }
+*/
+
+  "sequencing \\/" ! prop { (x: String \/ Int, y: String \/ String, z: String \/ Float) =>
+    sequence(x :: y :: z :: HNil) must_== ((x |@| y |@| z) { _ :: _ :: _ :: HNil })
   }
 
 }

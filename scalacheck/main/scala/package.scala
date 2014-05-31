@@ -7,11 +7,11 @@ import org.scalacheck.{Gen, Arbitrary, Shrink}
 package object scalacheck {
 
   // TODO this is terrible
-  private lazy val _emptyCoproduct: Gen[Nothing] = Gen(_ => None)
+  private lazy val _emptyCoproduct: Gen[Nothing] = Gen.fail
 
   implicit def ArbitraryI: TypeClass[Arbitrary] = new TypeClass[Arbitrary] {
 
-    def emptyProduct = Arbitrary(Gen.value(HNil))
+    def emptyProduct = Arbitrary(Gen.const(HNil))
 
     def product[H, T <: HList](h: Arbitrary[H], t: Arbitrary[T]) =
       Arbitrary(Gen.sized { size =>
