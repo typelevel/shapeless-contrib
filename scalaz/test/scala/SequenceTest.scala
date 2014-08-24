@@ -21,6 +21,12 @@ class SequenceTest extends Spec {
     sequence(x :: y :: z :: HNil) must_== ((x |@| y |@| z) { _ :: _ :: _ :: HNil })
   }
 
+  // note: using the ValidationNel type alias here breaks the implicit search
+  // see https://github.com/typelevel/shapeless-contrib/issues/20
+  "sequencing ValidationNel" ! prop { (x: Validation[NonEmptyList[String], Int], y: Validation[NonEmptyList[String], String], z: Validation[NonEmptyList[String], Float]) =>
+    sequence(x :: y :: z :: HNil) must_== ((x |@| y |@| z) { _ :: _ :: _ :: HNil })
+  }
+
 /*
   "sequencing Kleisli" ! prop { (x: Kleisli[Option, Int, String], y: Kleisli[Option, Int, Boolean], z: Kleisli[Option, Int, String], i: Int) =>
     sequence(x :: y :: z :: HNil).apply(i) must_== (((x |@| y |@| z) { _ :: _ :: _ :: HNil }).apply(i))
