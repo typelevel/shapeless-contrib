@@ -9,19 +9,17 @@ Interoperability libraries for Shapeless
 Usage
 -----
 
-This library is currently available for Scala 2.10.
+This library is currently available for Scala 2.11.
 
 To use the latest version, include the following in your `build.sbt`:
 
 ```scala
 libraryDependencies ++= Seq(
-  "org.typelevel" %% "shapeless-scalacheck" % "0.2",
-  "org.typelevel" %% "shapeless-spire" % "0.2",
-  "org.typelevel" %% "shapeless-scalaz" % "0.2"
+  "org.typelevel" %% "shapeless-scalacheck" % "0.3",
+  "org.typelevel" %% "shapeless-spire" % "0.3",
+  "org.typelevel" %% "shapeless-scalaz" % "0.3"
 )
 ```
-
-Some features are only available in the snapshot version (`0.3-SNAPSHOT`).
 
 
 What does this library do?
@@ -35,7 +33,7 @@ Examples
 
 ### Scalaz + Shapeless = Profit
 
-_Note:_ The current 0.2.x series depends on shapeless 2.0.0.
+_Note:_ The current 0.3.x series depends on shapeless 2.0.0.
 
 The combination of these two libraries allows for some nifty utility functions related to `scalaz.Applicative`:
 
