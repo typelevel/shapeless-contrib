@@ -13,7 +13,7 @@ object ShapelessContribBuild extends Build {
 
   val shapelessVersion = "2.0.0"
   val scalazVersion = "7.1.0"
-  val scalacheckVersion = "1.11.3"
+  val scalacheckVersion = "1.11.5"
 
 
   lazy val publishSignedArtifacts = ReleaseStep(
@@ -127,7 +127,7 @@ object ShapelessContribBuild extends Build {
       libraryDependencies ++= Seq(
         "org.scalaz" %% "scalaz-core" % scalazVersion,
 
-        "org.specs2" %% "specs2" % "2.4" % "test",
+        "org.specs2" %% "specs2" % "2.4.1" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
         "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
         "org.typelevel" %% "scalaz-specs2" % "0.3.0" % "test"
@@ -142,7 +142,7 @@ object ShapelessContribBuild extends Build {
     settings = standardSettings ++ Seq(
       name := "shapeless-spire",
       libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "2.1.3" % "test",
+        "org.scalatest" %% "scalatest" % "2.2.2" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
         "org.spire-math" %% "spire" % "0.8.2",
         "org.spire-math" %% "spire-scalacheck-binding" % "0.8.2" % "test"
