@@ -2,6 +2,8 @@ package shapeless.contrib.scalaz
 
 import org.specs2.scalaz.Spec
 
+import org.scalacheck.Arbitrary
+
 import scalaz._
 import scalaz.scalacheck.ScalazArbitrary._
 
@@ -12,6 +14,11 @@ class TraverseTest extends Spec {
   import scalaz.std.string._
   import scalaz.syntax.apply._
   import scalaz.syntax.std.option._
+
+  // if I remove this, an instance is chosen which discards a lot of values
+  // TODO investigate
+  implicit def setArbitrary[A : Arbitrary]: Arbitrary[Set[A]] =
+    Arbitrary(implicitly[Arbitrary[List[A]]].arbitrary.map(_.toSet))
 
   def optToValidation[T](opt: Option[T]): Validation[String, T] = opt.toSuccess("Nothing there!")
 

@@ -10,7 +10,7 @@ import java.nio.ByteBuffer
 import shapeless._
 import shapeless.ops.hlist._
 
-import scalaz.{Coproduct => _, _}
+import scalaz.\/
 import scalaz.std.tuple._
 import scalaz.syntax.bifunctor._
 import scalaz.syntax.id._

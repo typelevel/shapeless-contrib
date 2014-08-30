@@ -1,15 +1,18 @@
-package shapeless.contrib.scalaz
+//package shapeless.contrib.scalaz
+package scalaz
+// TODO make a public 'Suspend' smart constructor
 
+import scalaz.Free._
 import org.specs2.scalaz.Spec
 import scalaz.scalacheck.ScalazProperties.order
 import scalaz.scalacheck.ScalaCheckBinding._
-import scalaz._, Free._
 import scalaz.std.AllInstances._
 import org.scalacheck.{Arbitrary, Gen}
+import shapeless.contrib.scalaz._
 
 class FreeTest extends Spec {
 
-  implicit def freeArbitrary[F[+_]: Functor, A](implicit
+  implicit def freeArbitrary[F[_]: Functor, A](implicit
     A: Arbitrary[A],
     F0: shapeless.Lazy[Arbitrary[F[Free[F, A]]]]
   ): Arbitrary[Free[F, A]] =
@@ -18,7 +21,7 @@ class FreeTest extends Spec {
       Functor[Arbitrary].map(F0.value)(Suspend[F, A](_)).arbitrary
     ))
 
-  type PairOpt[+A] = Option[(A, A)]
+  type PairOpt[A] = Option[(A, A)]
   type FList[A] = Free[PairOpt, A] // Free Monad List
 
   implicit val pairOptFunctor: Functor[PairOpt] =

@@ -1,6 +1,6 @@
 package shapeless.contrib.scalaz
 
-import scalaz.{Coproduct => _, _}
+import scalaz.{Semigroup, Monoid, Equal, Order, Show, Ordering, Cord}
 
 import shapeless._
 import shapeless.contrib._

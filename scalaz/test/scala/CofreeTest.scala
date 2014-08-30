@@ -26,7 +26,7 @@ class CofreeTest extends Spec with ScalazMatchers{
   }
 
   implicit def CofreeArb[F[+_]: Functor, A](implicit A: Arbitrary[A], F: shapeless.Lazy[Arbitrary[F[Cofree[F, A]]]]): Arbitrary[Cofree[F, A]] =
-    Apply[Arbitrary].apply2(A, F.value)(Cofree(_, _))
+    Apply[Arbitrary].apply2(A, F.value)(Cofree[F, A](_, _))
 
   implicit def CofreeListArb[A: Arbitrary]: Arbitrary[CofreeList[A]] =
     Functor[Arbitrary].map(implicitly[Arbitrary[Tree[A]]])(treeCofreeListIso.to)
@@ -41,19 +41,15 @@ class CofreeTest extends Spec with ScalazMatchers{
     treeCofreeListIso.to(treeCofreeListIso.from(b)) must equal(b)
   }*/
 
-  /*"Equal[Cofree[List, Int]] is Equal[Tree[Int]]" ! prop{ (a: Cofree[List, Int], b: Cofree[List, Int]) =>
+  "Equal[Cofree[List, Int]] is Equal[Tree[Int]]" ! prop{ (a: Cofree[List, Int], b: Cofree[List, Int]) =>
     Equal[Cofree[List, Int]].equal(a, b) must_== Equal[Tree[Int]].equal(treeCofreeListIso.from(a), treeCofreeListIso.from(b))
-  }*/
+  }
 
-  /*"Order[Cofree[Option, Int]] is Order[List[Int]]" ! prop{ (a: Cofree[Option, Int], b: Cofree[Option, Int]) =>
+  "Order[Cofree[Option, Int]] is Order[List[Int]]" ! prop{ (a: Cofree[Option, Int], b: Cofree[Option, Int]) =>
     val aa = a.toList
     val bb = b.toList
     Equal[Cofree[Option, Int]].equal(a, b) must_== Equal[List[Int]].equal(aa, bb)
     Order[Cofree[Option, Int]].order(a, b) must_== Order[List[Int]].order(aa, bb)
-  }*/
-
-  "Show[Cofree[Option, Int]]" ! prop{ a: Cofree[Option, Int] =>
-    Show[Cofree[Option, Int]].shows(a) must_== a.toString
   }
 
 }

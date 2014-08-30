@@ -12,7 +12,7 @@ import com.typesafe.sbt.pgp.PgpKeys._
 object ShapelessContribBuild extends Build {
 
   val shapelessVersion = "2.0.0"
-  val scalazVersion = "7.0.6"
+  val scalazVersion = "7.1.0"
   val scalacheckVersion = "1.11.3"
 
 
@@ -38,7 +38,7 @@ object ShapelessContribBuild extends Build {
     licenses := Seq("MIT" → url("http://www.opensource.org/licenses/mit-license.php")),
     homepage := Some(url("http://typelevel.org/")),
 
-    scalaVersion := "2.11.1",
+    scalaVersion := "2.11.2",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:experimental.macros"),
 
     libraryDependencies ++= Seq(
@@ -127,10 +127,10 @@ object ShapelessContribBuild extends Build {
       libraryDependencies ++= Seq(
         "org.scalaz" %% "scalaz-core" % scalazVersion,
 
-        "org.specs2" %% "specs2" % "2.3.11" % "test",
+        "org.specs2" %% "specs2" % "2.4" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
         "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
-        "org.typelevel" %% "scalaz-specs2" % "0.2" % "test"
+        "org.typelevel" %% "scalaz-specs2" % "0.3.0" % "test"
       )
     )
   )
@@ -144,8 +144,8 @@ object ShapelessContribBuild extends Build {
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "2.1.3" % "test",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
-        "org.spire-math" %% "spire" % "0.7.4",
-        "org.spire-math" %% "spire-scalacheck-binding" % "0.7.4" % "test"
+        "org.spire-math" %% "spire" % "0.8.2",
+        "org.spire-math" %% "spire-scalacheck-binding" % "0.8.2" % "test"
       )
     )
   )
