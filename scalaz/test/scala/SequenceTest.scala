@@ -12,6 +12,7 @@ class SequenceTest extends Spec {
   import scalaz.std.option._
   import scalaz.std.string._
   import scalaz.syntax.apply._
+  import scalaz.concurrent.Future
 
   "sequencing Option" ! prop { (x: Option[Int], y: Option[String], z: Option[Float]) =>
     sequence(x :: y :: z :: HNil) must_== ((x |@| y |@| z) { _ :: _ :: _ :: HNil })
@@ -41,6 +42,10 @@ class SequenceTest extends Spec {
 
   "sequencing \\/" ! prop { (x: String \/ Int, y: String \/ String, z: String \/ Float) =>
     sequence(x :: y :: z :: HNil) must_== ((x |@| y |@| z) { _ :: _ :: _ :: HNil })
+  }
+
+  "sequencing Futures" ! prop { (x: Future[Int], y: Future[String], z: Future[Float]) =>
+    sequence(x :: y :: z :: HNil).run must_== (((x |@| y |@| z) { _ :: _ :: _ :: HNil }).run)
   }
 
 }
