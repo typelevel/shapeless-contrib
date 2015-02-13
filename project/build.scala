@@ -15,6 +15,14 @@ object ShapelessContribBuild extends Build {
   val scalazVersion = "7.1.0"
   val scalacheckVersion = "1.11.3"
 
+  val shapeless = Def setting (
+      CrossVersion partialVersion scalaVersion.value match {
+      case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+        "com.chuusai" %% "shapeless" % shapelessVersion
+      case Some((2, 10)) =>
+        "com.chuusai" %  "shapeless" % shapelessVersion cross CrossVersion.full
+    }
+  )
 
   lazy val publishSignedArtifacts = ReleaseStep(
     action = st => {
@@ -38,11 +46,12 @@ object ShapelessContribBuild extends Build {
     licenses := Seq("MIT" → url("http://www.opensource.org/licenses/mit-license.php")),
     homepage := Some(url("http://typelevel.org/")),
 
-    scalaVersion := "2.11.2",
+    scalaVersion := "2.11.5",
+    crossScalaVersions := Seq("2.10.4"),
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:experimental.macros"),
 
     libraryDependencies ++= Seq(
-      "com.chuusai" %% "shapeless" % shapelessVersion,
+      shapeless.value,
       "org.scala-lang" % "scala-reflect" % scalaVersion.value
     ),
 
