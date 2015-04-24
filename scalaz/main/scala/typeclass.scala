@@ -5,7 +5,7 @@ import scalaz.{Semigroup, Monoid, Equal, Order, Show, Ordering, Cord}
 import shapeless._
 import shapeless.contrib._
 
-private trait Empty {
+trait Empty {
 
   def emptyProduct = new Monoid[HNil] with Order[HNil] with Show[HNil] {
     def zero = HNil
@@ -25,7 +25,7 @@ private trait Empty {
 
 // Products
 
-private trait ProductSemigroup[F, T <: HList]
+trait ProductSemigroup[F, T <: HList]
   extends Semigroup[F :: T]
   with Product[Semigroup, F, T] {
 
@@ -34,7 +34,7 @@ private trait ProductSemigroup[F, T <: HList]
 
 }
 
-private trait ProductMonoid[F, T <: HList]
+trait ProductMonoid[F, T <: HList]
   extends ProductSemigroup[F, T]
   with Monoid[F :: T]
   with Product[Monoid, F, T] {
@@ -43,7 +43,7 @@ private trait ProductMonoid[F, T <: HList]
 
 }
 
-private trait ProductEqual[F, T <: HList]
+trait ProductEqual[F, T <: HList]
   extends Equal[F :: T]
   with Product[Equal, F, T] {
 
@@ -52,7 +52,7 @@ private trait ProductEqual[F, T <: HList]
 
 }
 
-private trait ProductOrder[F, T <: HList]
+trait ProductOrder[F, T <: HList]
   extends ProductEqual[F, T]
   with Order[F :: T]
   with Product[Order, F, T] {
@@ -65,7 +65,7 @@ private trait ProductOrder[F, T <: HList]
 
 }
 
-private trait ProductShow[F, T <: HList]
+trait ProductShow[F, T <: HList]
   extends Show[F :: T]
   with Product[Show, F, T] {
 
@@ -79,7 +79,7 @@ private trait ProductShow[F, T <: HList]
 
 // Coproducts
 
-private trait SumEqual[L, R <: Coproduct]
+trait SumEqual[L, R <: Coproduct]
   extends Equal[L :+: R]
   with Sum[Equal, L, R] {
 
@@ -91,7 +91,7 @@ private trait SumEqual[L, R <: Coproduct]
 
 }
 
-private trait SumOrder[L, R <: Coproduct]
+trait SumOrder[L, R <: Coproduct]
   extends SumEqual[L, R]
   with Order[L :+: R]
   with Sum[Order, L, R] {
@@ -108,7 +108,7 @@ private trait SumOrder[L, R <: Coproduct]
 
 }
 
-private trait SumShow[L, R <: Coproduct]
+trait SumShow[L, R <: Coproduct]
   extends Show[L :+: R]
   with Sum[Show, L, R] {
 
@@ -126,7 +126,7 @@ private trait SumShow[L, R <: Coproduct]
 
 // Isos
 
-private trait IsomorphicSemigroup[A, B]
+trait IsomorphicSemigroup[A, B]
   extends Semigroup[A]
   with Isomorphic[Semigroup, A, B] {
 
@@ -135,7 +135,7 @@ private trait IsomorphicSemigroup[A, B]
 
 }
 
-private trait IsomorphicMonoid[A, B]
+trait IsomorphicMonoid[A, B]
   extends IsomorphicSemigroup[A, B]
   with Monoid[A]
   with Isomorphic[Monoid, A, B] {
@@ -144,7 +144,7 @@ private trait IsomorphicMonoid[A, B]
 
 }
 
-private trait IsomorphicEqual[A, B]
+trait IsomorphicEqual[A, B]
   extends Equal[A]
   with Isomorphic[Equal, A, B] {
 
@@ -153,7 +153,7 @@ private trait IsomorphicEqual[A, B]
 
 }
 
-private trait IsomorphicOrder[A, B]
+trait IsomorphicOrder[A, B]
   extends IsomorphicEqual[A, B]
   with Order[A]
   with Isomorphic[Order, A, B] {
@@ -166,7 +166,7 @@ private trait IsomorphicOrder[A, B]
 
 }
 
-private trait IsomorphicShow[A, B]
+trait IsomorphicShow[A, B]
   extends Show[A]
   with Isomorphic[Show, A, B] {
 
@@ -179,66 +179,71 @@ private trait IsomorphicShow[A, B]
 }
 
 trait Instances {
-
   // Instances
 
-  implicit def SemigroupI: ProductTypeClass[Semigroup] = new ProductTypeClass[Semigroup] with Empty {
-    def product[F, T <: HList](f: Semigroup[F], t: Semigroup[T]) =
-      new ProductSemigroup[F, T] { def F = f; def T = t }
-    def project[A, B](b: => Semigroup[B], ab: A => B, ba: B => A) =
-      new IsomorphicSemigroup[A, B] { def B = b; def to = ab; def from = ba }
+  object SemigroupDerivedOrphans extends ProductTypeClassCompanion[Semigroup] {
+    object typeClass extends ProductTypeClass[Semigroup] with Empty {
+      def product[F, T <: HList](f: Semigroup[F], t: Semigroup[T]) =
+        new ProductSemigroup[F, T] { def F = f; def T = t }
+      def project[A, B](b: => Semigroup[B], ab: A => B, ba: B => A) =
+        new IsomorphicSemigroup[A, B] { def B = b; def to = ab; def from = ba }
+    }
   }
 
-  implicit def MonoidI: ProductTypeClass[Monoid] = new ProductTypeClass[Monoid] with Empty {
-    def product[F, T <: HList](f: Monoid[F], t: Monoid[T]) =
-      new ProductMonoid[F, T] { def F = f; def T = t }
-    def project[A, B](b: => Monoid[B], ab: A => B, ba: B => A) =
-      new IsomorphicMonoid[A, B] { def B = b; def to = ab; def from = ba }
+  object MonoidDerivedOrphans extends ProductTypeClassCompanion[Monoid] {
+    object typeClass extends ProductTypeClass[Monoid] with Empty {
+      def product[F, T <: HList](f: Monoid[F], t: Monoid[T]) =
+        new ProductMonoid[F, T] { def F = f; def T = t }
+      def project[A, B](b: => Monoid[B], ab: A => B, ba: B => A) =
+        new IsomorphicMonoid[A, B] { def B = b; def to = ab; def from = ba }
+    }
   }
 
-  implicit def EqualI: TypeClass[Equal] = new TypeClass[Equal] with Empty {
-    def product[F, T <: HList](f: Equal[F], t: Equal[T]) =
-      new ProductEqual[F, T] { def F = f; def T = t }
-    def coproduct[L, R <: Coproduct](l: => Equal[L], r: => Equal[R]) =
-      new SumEqual[L, R] { def L = l; def R = r }
-    def project[A, B](b: => Equal[B], ab: A => B, ba: B => A) =
-      new IsomorphicEqual[A, B] { def B = b; def to = ab; def from = ba }
+  object EqualDerivedOrphans extends TypeClassCompanion[Equal] {
+    object typeClass extends TypeClass[Equal] with Empty {
+      def product[F, T <: HList](f: Equal[F], t: Equal[T]) =
+        new ProductEqual[F, T] { def F = f; def T = t }
+      def coproduct[L, R <: Coproduct](l: => Equal[L], r: => Equal[R]) =
+        new SumEqual[L, R] { def L = l; def R = r }
+      def project[A, B](b: => Equal[B], ab: A => B, ba: B => A) =
+        new IsomorphicEqual[A, B] { def B = b; def to = ab; def from = ba }
+    }
   }
 
-  implicit def ShowI: TypeClass[Show] = new TypeClass[Show] with Empty {
-    def product[F, T <: HList](f: Show[F], t: Show[T]) =
-      new ProductShow[F, T] { def F = f; def T = t }
-    def coproduct[L, R <: Coproduct](l: => Show[L], r: => Show[R]) =
-      new SumShow[L, R] { def L = l; def R = r }
-    def project[A, B](b: => Show[B], ab: A => B, ba: B => A) =
-      new IsomorphicShow[A, B] { def B = b; def to = ab; def from = ba }
+  object OrderDerivedOrphans extends TypeClassCompanion[Order] {
+    object typeClass extends TypeClass[Order] with Empty {
+      def product[F, T <: HList](f: Order[F], t: Order[T]) =
+        new ProductOrder[F, T] { def F = f; def T = t }
+      def coproduct[L, R <: Coproduct](l: => Order[L], r: => Order[R]) =
+        new SumOrder[L, R] { def L = l; def R = r }
+      def project[A, B](b: => Order[B], ab: A => B, ba: B => A) =
+        new IsomorphicOrder[A, B] { def B = b; def to = ab; def from = ba }
+    }
   }
 
-  implicit def OrderI: TypeClass[Order] = new TypeClass[Order] with Empty {
-    def product[F, T <: HList](f: Order[F], t: Order[T]) =
-      new ProductOrder[F, T] { def F = f; def T = t }
-    def coproduct[L, R <: Coproduct](l: => Order[L], r: => Order[R]) =
-      new SumOrder[L, R] { def L = l; def R = r }
-    def project[A, B](b: => Order[B], ab: A => B, ba: B => A) =
-      new IsomorphicOrder[A, B] { def B = b; def to = ab; def from = ba }
+  object ShowDerivedOrphans extends TypeClassCompanion[Show] {
+    object typeClass extends TypeClass[Show] with Empty {
+      def product[F, T <: HList](f: Show[F], t: Show[T]) =
+        new ProductShow[F, T] { def F = f; def T = t }
+      def coproduct[L, R <: Coproduct](l: => Show[L], r: => Show[R]) =
+        new SumShow[L, R] { def L = l; def R = r }
+      def project[A, B](b: => Show[B], ab: A => B, ba: B => A) =
+        new IsomorphicShow[A, B] { def B = b; def to = ab; def from = ba }
+    }
   }
 
+  implicit def deriveSemigroup[T]
+    (implicit orphan: Orphan[Semigroup, SemigroupDerivedOrphans.type, T]): Semigroup[T] = orphan.instance
 
-  // Boilerplate
+  implicit def deriveMonoid[T]
+    (implicit orphan: Orphan[Monoid, MonoidDerivedOrphans.type, T]): Monoid[T] = orphan.instance
 
-  implicit def deriveSemigroup[T](implicit ev: ProductTypeClass[Semigroup]): Semigroup[T] =
-    macro GenericMacros.deriveProductInstance[Semigroup, T]
+  implicit def deriveEqual[T]
+    (implicit orphan: Orphan[Equal, EqualDerivedOrphans.type, T]): Equal[T] = orphan.instance
 
-  implicit def deriveMonoid[T](implicit ev: ProductTypeClass[Monoid]): Monoid[T] =
-    macro GenericMacros.deriveProductInstance[Monoid, T]
+  implicit def deriveOrder[T]
+    (implicit orphan: Orphan[Order, OrderDerivedOrphans.type, T]): Order[T] = orphan.instance
 
-  implicit def deriveEqual[T](implicit ev: TypeClass[Equal]): Equal[T] =
-    macro GenericMacros.deriveInstance[Equal, T]
-
-  implicit def deriveOrder[T](implicit ev: TypeClass[Order]): Order[T] =
-    macro GenericMacros.deriveInstance[Order, T]
-
-  implicit def deriveShow[T](implicit ev: TypeClass[Show]): Show[T] =
-    macro GenericMacros.deriveInstance[Show, T]
-
+  implicit def deriveShow[T]
+    (implicit orphan: Orphan[Show, ShowDerivedOrphans.type, T]): Show[T] = orphan.instance
 }

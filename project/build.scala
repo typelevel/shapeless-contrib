@@ -11,18 +11,13 @@ import com.typesafe.sbt.pgp.PgpKeys._
 
 object ShapelessContribBuild extends Build {
 
-  val shapelessVersion = "2.0.0"
+  val shapelessVersion = "2.2.0-SNAPSHOT"
   val scalazVersion = "7.1.0"
   val scalacheckVersion = "1.11.3"
 
-  val shapeless = Def setting (
-      CrossVersion partialVersion scalaVersion.value match {
-      case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-        "com.chuusai" %% "shapeless" % shapelessVersion
-      case Some((2, 10)) =>
-        "com.chuusai" %  "shapeless" % shapelessVersion cross CrossVersion.full
-    }
-  )
+  def macroParadise(v: String) =
+    if (v.startsWith("2.11")) Nil
+    else List(compilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full))
 
   lazy val publishSignedArtifacts = ReleaseStep(
     action = st => {
@@ -46,14 +41,16 @@ object ShapelessContribBuild extends Build {
     licenses := Seq("MIT" → url("http://www.opensource.org/licenses/mit-license.php")),
     homepage := Some(url("http://typelevel.org/")),
 
-    scalaVersion := "2.11.5",
-    crossScalaVersions := Seq("2.10.4"),
+    scalaVersion := "2.11.6",
+    crossScalaVersions := Seq("2.10.5"),
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:experimental.macros"),
 
+    resolvers += Resolver.sonatypeRepo("snapshots"),
+
     libraryDependencies ++= Seq(
-      shapeless.value,
+      "com.chuusai"    %% "shapeless"    % shapelessVersion,
       "org.scala-lang" % "scala-reflect" % scalaVersion.value
-    ),
+    ) ++ macroParadise(scalaVersion.value),
 
     sourceDirectory <<= baseDirectory(identity),
 

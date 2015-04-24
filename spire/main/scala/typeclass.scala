@@ -6,7 +6,7 @@ import spire.algebra._
 import shapeless._
 import shapeless.contrib._
 
-private trait Empty {
+trait Empty {
 
   def emptyProduct = new Order[HNil] with AbGroup[HNil] with AdditiveAbGroup[HNil] with MultiplicativeAbGroup[HNil] {
     override def eqv(x: HNil, y: HNil) = true
@@ -32,7 +32,7 @@ private trait Empty {
 
 // Products
 
-private trait ProductEq[F, T <: HList]
+trait ProductEq[F, T <: HList]
   extends Eq[F :: T]
   with Product[Eq, F, T] {
 
@@ -44,7 +44,7 @@ private trait ProductEq[F, T <: HList]
 
 }
 
-private trait ProductOrder[F, T <: HList]
+trait ProductOrder[F, T <: HList]
   extends ProductEq[F, T]
   with Order[F :: T]
   with Product[Order, F, T] {
@@ -62,7 +62,7 @@ private trait ProductOrder[F, T <: HList]
 
 }
 
-private trait ProductSemigroup[F, T <: HList]
+trait ProductSemigroup[F, T <: HList]
   extends Semigroup[F :: T]
   with Product[Semigroup, F, T] {
 
@@ -71,7 +71,7 @@ private trait ProductSemigroup[F, T <: HList]
 
 }
 
-private trait ProductMonoid[F, T <: HList]
+trait ProductMonoid[F, T <: HList]
   extends ProductSemigroup[F, T]
   with Monoid[F :: T]
   with Product[Monoid, F, T] {
@@ -80,7 +80,7 @@ private trait ProductMonoid[F, T <: HList]
 
 }
 
-private trait ProductGroup[F, T <: HList]
+trait ProductGroup[F, T <: HList]
   extends ProductMonoid[F, T]
   with Group[F :: T]
   with Product[Group, F, T] {
@@ -90,11 +90,11 @@ private trait ProductGroup[F, T <: HList]
 
 }
 
-private trait ProductAbGroup[F, T <: HList]
+trait ProductAbGroup[F, T <: HList]
   extends ProductGroup[F, T]
   with AbGroup[F :: T]
 
-private trait ProductAdditiveSemigroup[F, T <: HList]
+trait ProductAdditiveSemigroup[F, T <: HList]
   extends AdditiveSemigroup[F :: T]
   with Product[AdditiveSemigroup, F, T] {
 
@@ -103,7 +103,7 @@ private trait ProductAdditiveSemigroup[F, T <: HList]
 
 }
 
-private trait ProductAdditiveMonoid[F, T <: HList]
+trait ProductAdditiveMonoid[F, T <: HList]
   extends ProductAdditiveSemigroup[F, T]
   with AdditiveMonoid[F :: T]
   with Product[AdditiveMonoid, F, T] {
@@ -112,7 +112,7 @@ private trait ProductAdditiveMonoid[F, T <: HList]
 
 }
 
-private trait ProductAdditiveGroup[F, T <: HList]
+trait ProductAdditiveGroup[F, T <: HList]
   extends ProductAdditiveMonoid[F, T]
   with AdditiveGroup[F :: T]
   with Product[AdditiveGroup, F, T] {
@@ -125,11 +125,11 @@ private trait ProductAdditiveGroup[F, T <: HList]
 
 }
 
-private trait ProductAdditiveAbGroup[F, T <: HList]
+trait ProductAdditiveAbGroup[F, T <: HList]
   extends ProductAdditiveGroup[F, T]
   with AdditiveAbGroup[F :: T]
 
-private trait ProductMultiplicativeSemigroup[F, T <: HList]
+trait ProductMultiplicativeSemigroup[F, T <: HList]
   extends MultiplicativeSemigroup[F :: T]
   with Product[MultiplicativeSemigroup, F, T] {
 
@@ -138,7 +138,7 @@ private trait ProductMultiplicativeSemigroup[F, T <: HList]
 
 }
 
-private trait ProductMultiplicativeMonoid[F, T <: HList]
+trait ProductMultiplicativeMonoid[F, T <: HList]
   extends ProductMultiplicativeSemigroup[F, T]
   with MultiplicativeMonoid[F :: T]
   with Product[MultiplicativeMonoid, F, T] {
@@ -147,7 +147,7 @@ private trait ProductMultiplicativeMonoid[F, T <: HList]
 
 }
 
-private trait ProductMultiplicativeGroup[F, T <: HList]
+trait ProductMultiplicativeGroup[F, T <: HList]
   extends ProductMultiplicativeMonoid[F, T]
   with MultiplicativeGroup[F :: T]
   with Product[MultiplicativeGroup, F, T] {
@@ -160,14 +160,14 @@ private trait ProductMultiplicativeGroup[F, T <: HList]
 
 }
 
-private trait ProductMultiplicativeAbGroup[F, T <: HList]
+trait ProductMultiplicativeAbGroup[F, T <: HList]
   extends ProductMultiplicativeGroup[F, T]
   with MultiplicativeAbGroup[F :: T]
 
 
 // Isos
 
-private trait IsomorphicSemigroup[A, B]
+trait IsomorphicSemigroup[A, B]
   extends Semigroup[A]
   with Isomorphic[Semigroup, A, B] {
 
@@ -176,7 +176,7 @@ private trait IsomorphicSemigroup[A, B]
 
 }
 
-private trait IsomorphicMonoid[A, B]
+trait IsomorphicMonoid[A, B]
   extends IsomorphicSemigroup[A, B]
   with Monoid[A]
   with Isomorphic[Monoid, A, B] {
@@ -185,7 +185,7 @@ private trait IsomorphicMonoid[A, B]
 
 }
 
-private trait IsomorphicGroup[A, B]
+trait IsomorphicGroup[A, B]
   extends IsomorphicMonoid[A, B]
   with Group[A]
   with Isomorphic[Group, A, B] {
@@ -195,11 +195,11 @@ private trait IsomorphicGroup[A, B]
 
 }
 
-private trait IsomorphicAbGroup[A, B]
+trait IsomorphicAbGroup[A, B]
   extends IsomorphicGroup[A, B]
   with AbGroup[A]
 
-private trait IsomorphicAdditiveSemigroup[A, B]
+trait IsomorphicAdditiveSemigroup[A, B]
   extends AdditiveSemigroup[A]
   with Isomorphic[AdditiveSemigroup, A, B] {
 
@@ -208,7 +208,7 @@ private trait IsomorphicAdditiveSemigroup[A, B]
 
 }
 
-private trait IsomorphicAdditiveMonoid[A, B]
+trait IsomorphicAdditiveMonoid[A, B]
   extends IsomorphicAdditiveSemigroup[A, B]
   with AdditiveMonoid[A]
   with Isomorphic[AdditiveMonoid, A, B] {
@@ -217,7 +217,7 @@ private trait IsomorphicAdditiveMonoid[A, B]
 
 }
 
-private trait IsomorphicAdditiveGroup[A, B]
+trait IsomorphicAdditiveGroup[A, B]
   extends IsomorphicAdditiveMonoid[A, B]
   with AdditiveGroup[A]
   with Isomorphic[AdditiveGroup, A, B] {
@@ -230,11 +230,11 @@ private trait IsomorphicAdditiveGroup[A, B]
 
 }
 
-private trait IsomorphicAdditiveAbGroup[A, B]
+trait IsomorphicAdditiveAbGroup[A, B]
   extends IsomorphicAdditiveGroup[A, B]
   with AdditiveAbGroup[A]
 
-private trait IsomorphicMultiplicativeSemigroup[A, B]
+trait IsomorphicMultiplicativeSemigroup[A, B]
   extends MultiplicativeSemigroup[A]
   with Isomorphic[MultiplicativeSemigroup, A, B] {
 
@@ -243,7 +243,7 @@ private trait IsomorphicMultiplicativeSemigroup[A, B]
 
 }
 
-private trait IsomorphicMultiplicativeMonoid[A, B]
+trait IsomorphicMultiplicativeMonoid[A, B]
   extends IsomorphicMultiplicativeSemigroup[A, B]
   with MultiplicativeMonoid[A]
   with Isomorphic[MultiplicativeMonoid, A, B] {
@@ -252,7 +252,7 @@ private trait IsomorphicMultiplicativeMonoid[A, B]
 
 }
 
-private trait IsomorphicMultiplicativeGroup[A, B]
+trait IsomorphicMultiplicativeGroup[A, B]
   extends IsomorphicMultiplicativeMonoid[A, B]
   with MultiplicativeGroup[A]
   with Isomorphic[MultiplicativeGroup, A, B] {
@@ -265,7 +265,7 @@ private trait IsomorphicMultiplicativeGroup[A, B]
 
 }
 
-private trait IsomorphicMultiplicativeAbGroup[A, B]
+trait IsomorphicMultiplicativeAbGroup[A, B]
   extends IsomorphicMultiplicativeGroup[A, B]
   with MultiplicativeAbGroup[A]
 
