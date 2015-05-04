@@ -11,7 +11,7 @@ import com.typesafe.sbt.pgp.PgpKeys._
 
 object ShapelessContribBuild extends Build {
 
-  val shapelessVersion = "2.2.0-SNAPSHOT"
+  val shapelessVersion = "2.2.0-RC5"
   val scalazVersion = "7.1.0"
   val scalacheckVersion = "1.11.3"
 
