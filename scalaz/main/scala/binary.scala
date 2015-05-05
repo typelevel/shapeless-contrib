@@ -99,9 +99,8 @@ trait Binary[A] { outer =>
 
 }
 
-object Binary extends TypeClassCompanion[Binary] {
-
-  @inline def apply[A](implicit A: Binary[A]) = A
+object Binary {
+  def apply[T](implicit bt: Binary[T]): Binary[T] = bt
 
   // Ops
 
@@ -114,41 +113,43 @@ object Binary extends TypeClassCompanion[Binary] {
     def decodeOnly[A : Binary] = Binary[A] decode bytes map { _._1 }
   }
 
-  // Binary is a TypeClass
+  object auto extends TypeClassCompanion[Binary] {
+    def derive[T](implicit bt: Binary[T]): Binary[T] = bt
 
-  implicit val BinaryInstance: TypeClass[Binary] = new TypeClass[Binary] {
+    object typeClass extends TypeClass[Binary] {
 
-    def emptyProduct = new Binary[HNil] {
-      def encode(hnil: HNil) = Vector()
-      def decode(bytes: Vector[Byte]) = Some(HNil, bytes)
-    }
-
-    def project[F, G](instance: => Binary[G], to: F => G, from: G => F) =
-      instance.project(to, from)
-
-    def product[H, T <: HList](BHead: Binary[H], BTail: Binary[T]) = new ProductBinary[H :: T, H, T] {
-      def A = BHead
-      def B = BTail
-      def fold[X](p: H :: T)(f: (H, T) => X) = f(p.head, p.tail)
-      def prod(h: H, t: T) = h :: t
-    }
-
-    def coproduct[L, R <: Coproduct](CL: => Binary[L],CR: => Binary[R]) = new SumBinary[L :+: R, L, R] {
-      def A = CL
-      def B = CR
-      def fold[X](s: L :+: R)(left: L => X, right: R => X) = s match {
-        case Inl(l) => left(l)
-        case Inr(r) => right(r)
+      def emptyProduct = new Binary[HNil] {
+        def encode(hnil: HNil) = Vector()
+        def decode(bytes: Vector[Byte]) = Some(HNil, bytes)
       }
-      def left(l: L) = Inl(l)
-      def right(r: R) = Inr(r)
-    }
 
-    def emptyCoproduct = new Binary[CNil] {
-      def encode(cnil: CNil) = ???
-      def decode(bytes: Vector[Byte]) = ???
-    }
+      def project[F, G](instance: => Binary[G], to: F => G, from: G => F) =
+        instance.project(to, from)
 
+      def product[H, T <: HList](BHead: Binary[H], BTail: Binary[T]) = new ProductBinary[H :: T, H, T] {
+        def A = BHead
+        def B = BTail
+        def fold[X](p: H :: T)(f: (H, T) => X) = f(p.head, p.tail)
+        def prod(h: H, t: T) = h :: t
+      }
+
+      def coproduct[L, R <: Coproduct](CL: => Binary[L],CR: => Binary[R]) = new SumBinary[L :+: R, L, R] {
+        def A = CL
+        def B = CR
+        def fold[X](s: L :+: R)(left: L => X, right: R => X) = s match {
+          case Inl(l) => left(l)
+          case Inr(r) => right(r)
+        }
+        def left(l: L) = Inl(l)
+        def right(r: R) = Inr(r)
+      }
+
+      def emptyCoproduct = new Binary[CNil] {
+        def encode(cnil: CNil) = ???
+        def decode(bytes: Vector[Byte]) = ???
+      }
+
+    }
   }
 
   // Instances for data types
@@ -222,7 +223,7 @@ trait BinarySyntax {
 
 }
 
-private trait SumBinary[S, A, B] extends Binary[S] {
+trait SumBinary[S, A, B] extends Binary[S] {
 
   def A: Binary[A]
   def B: Binary[B]
@@ -245,7 +246,7 @@ private trait SumBinary[S, A, B] extends Binary[S] {
 
 }
 
-private trait ProductBinary[P, A, B] extends Binary[P] {
+trait ProductBinary[P, A, B] extends Binary[P] {
 
   def A: Binary[A]
   def B: Binary[B]

@@ -1,9 +1,25 @@
-package shapeless.contrib.scalacheck
+package shapeless.contrib.scalachecktests
 
 import org.scalacheck.{Arbitrary,Gen,Properties,Shrink,Test}
 import org.scalacheck.Prop.forAll
-import shapeless._
-import shapeless.ops.coproduct._
+
+import shapeless.contrib.scalacheck._
+
+object ArbitrarySpec extends Properties("Arbitrary") {
+  private val ok = (_: Any) => true
+
+  sealed trait Tree[A]
+  case class Node[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+  case class Leaf[A](item: A) extends Tree[A]
+
+  property("leaf") = {
+    forAll(implicitly[Arbitrary[Leaf[Int]]].arbitrary)(ok)
+  }
+
+  property("tree") = {
+    forAll(implicitly[Arbitrary[Tree[Int]]].arbitrary)(ok)
+  }
+}
 
 object ShrinkSpec extends Properties("Shrink") {
 
