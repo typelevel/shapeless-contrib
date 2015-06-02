@@ -9,15 +9,15 @@ Interoperability libraries for Shapeless
 Usage
 -----
 
-This library is currently available for Scala 2.11.
+This library is currently available for Scala 2.10 and 2.11.
 
 To use the latest version, include the following in your `build.sbt`:
 
 ```scala
 libraryDependencies ++= Seq(
-  "org.typelevel" %% "shapeless-scalacheck" % "0.3",
-  "org.typelevel" %% "shapeless-spire" % "0.3",
-  "org.typelevel" %% "shapeless-scalaz" % "0.3"
+  "org.typelevel" %% "shapeless-scalacheck" % "0.4",
+  "org.typelevel" %% "shapeless-spire" % "0.4",
+  "org.typelevel" %% "shapeless-scalaz" % "0.4"
 )
 ```
 
