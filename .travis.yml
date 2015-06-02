@@ -1,6 +1,10 @@
 language: scala
 scala:
-  - 2.10.4
-  - 2.11.5
+  - 2.10.5
+  - 2.11.6
 jdk:
   - oraclejdk7
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/acd320c0b11f34dcc2a0
