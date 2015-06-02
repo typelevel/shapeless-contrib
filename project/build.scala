@@ -42,7 +42,7 @@ object ShapelessContribBuild extends Build {
     homepage := Some(url("http://typelevel.org/")),
 
     scalaVersion := "2.11.6",
-    crossScalaVersions := Seq("2.10.5"),
+    crossScalaVersions := Seq("2.10.5", "2.11.6"),
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:experimental.macros"),
 
     resolvers += Resolver.sonatypeRepo("snapshots"),
