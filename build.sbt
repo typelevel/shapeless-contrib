@@ -22,8 +22,8 @@ addCommandAlias("scalaz", ";project scalazJVM")
 addCommandAlias("spire", ";project spireJVM")
 
 addCommandAlias("validate", ";root;compile;test")
-addCommandAlias("validateJVM", ";coreJVM/compile;coreJVM/mimaReportBinaryIssues;coreJVM/test;examplesJVM/compile;coreJVM/doc")
-addCommandAlias("validateJS", ";coreJS/compile;coreJS/mimaReportBinaryIssues;coreJS/test;examplesJS/compile;coreJS/doc")
+addCommandAlias("validateJVM", ";project rootJVM;compile;test")
+addCommandAlias("validateJS", ";project rootJS;compile;test")
 
 addCommandAlias("releaseAll", ";root;release skip-tests")
 
