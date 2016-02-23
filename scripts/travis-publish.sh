@@ -14,5 +14,5 @@ else
 PUBLISH=publishLocal
 fi
 
-#${SBT} validate ${PUBLISH}
+${SBT} validateJS
 ${SBT} validateJVM
