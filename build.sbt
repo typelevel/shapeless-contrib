@@ -11,8 +11,8 @@ import GitKeys._
 
 lazy val buildSettings = Seq(
   organization := "org.typelevel",
-  scalaVersion := "2.11.7",
-  crossScalaVersions := Seq("2.10.6", "2.11.7")
+  scalaVersion := "2.11.8",
+  crossScalaVersions := Seq("2.10.6", "2.11.8")
 )
 
 addCommandAlias("root", ";project rootJVM")
@@ -27,11 +27,11 @@ addCommandAlias("validateJS", ";project rootJS;compile;test")
 
 addCommandAlias("releaseAll", ";root;release skip-tests")
 
-val shapelessVersion = "2.2.0"
-val scalacheckVersion = "1.12.5"
+val shapelessVersion = "2.3.2"
+val scalacheckVersion = "1.13.4"
 val scalazVersion = "7.2.0"
-val spireVersion = "0.11.0"
-val scalatestVersion = "3.0.0-M7"
+val spireVersion = "0.13.0"
+val scalatestVersion = "3.0.1"
 val specs2Version = "3.6.6-scalaz-7.2.0"
 val scalazSpecs2Version = "0.5.0-SNAPSHOT"
 
@@ -61,7 +61,6 @@ lazy val commonSettings = Seq(
 ) ++ scalaMacroDependencies
 
 lazy val commonJsSettings = Seq(
-  scalaJSUseRhino in Global := false,
   parallelExecution in Test := false
 )
 
@@ -178,13 +177,13 @@ lazy val publishSettings = Seq(
   publishMavenStyle := true,
   publishArtifact in Test := false,
   pomIncludeRepository := { _ => false },
-  publishTo <<= version { (v: String) =>
+  publishTo := version { (v: String) =>
     val nexus = "https://oss.sonatype.org/"
     if (v.trim.endsWith("SNAPSHOT"))
       Some("snapshots" at nexus + "content/repositories/snapshots")
     else
       Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-  },
+  }.value,
   homepage := Some(url("http://typelevel.org/")),
   licenses := Seq("MIT" -> url("http://www.opensource.org/licenses/mit-license.php")),
   scmInfo :=
