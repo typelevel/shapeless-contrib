@@ -33,7 +33,6 @@ val scalazVersion = "7.2.0"
 val spireVersion = "0.13.0"
 val scalatestVersion = "3.0.1"
 val specs2Version = "3.6.6-scalaz-7.2.0"
-val scalazSpecs2Version = "0.5.0-SNAPSHOT"
 
 lazy val commonSettings = Seq(
   scalacOptions := Seq(
@@ -119,26 +118,6 @@ lazy val scalacheck = crossProject.crossType(CrossType.Pure)
 
 lazy val scalacheckJVM = scalacheck.jvm
 lazy val scalacheckJS = scalacheck.js
-
-lazy val scalaz = crossProject.crossType(CrossType.Pure)
-  .dependsOn(common, scalacheck % "test")
-  .settings(moduleName := "shapeless-scalaz")
-  .settings(coreSettings:_*)
-  .settings(mimaSettings:_*)
-  .settings(
-    libraryDependencies ++= Seq(
-      "com.chuusai"    %%% "shapeless"                 % shapelessVersion,
-      "org.scalaz"     %%% "scalaz-core"               % scalazVersion,
-      "org.specs2"     %%% "specs2-core"               % specs2Version       % "test",
-      "org.scalacheck" %%% "scalacheck"                % scalacheckVersion   % "test",
-      "org.scalaz"     %%% "scalaz-scalacheck-binding" % scalazVersion       % "test",
-      "org.typelevel"  %%% "scalaz-specs2"             % scalazSpecs2Version % "test"
-    )
-  )
-  .jsSettings(commonJsSettings:_*)
-  .jvmSettings(commonJvmSettings:_*)
-
-lazy val scalazJVM = scalaz.jvm
 
 lazy val spire = crossProject.crossType(CrossType.Pure)
   .dependsOn(common, scalacheck % "test")
