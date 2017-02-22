@@ -127,7 +127,7 @@ lazy val spire = crossProject.crossType(CrossType.Pure)
   .settings(
     libraryDependencies ++= Seq(
       "com.chuusai"    %%% "shapeless"                % shapelessVersion,
-      "org.scala-lang" %   "scala-reflect"            % scalaVersion.value % "provided",
+      scalaOrganization.value % "scala-reflect"       % scalaVersion.value % "provided",
       "org.spire-math" %%% "spire"                    % spireVersion,
       "org.scalatest"  %%% "scalatest"                % scalatestVersion   % "test",
       "org.scalacheck" %%% "scalacheck"               % scalacheckVersion  % "test",
