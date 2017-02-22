@@ -145,7 +145,7 @@ lazy val scalaMacroDependencies: Seq[Setting[_]] = Seq(
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, scalaMajor)) if scalaMajor >= 11 => Seq()
       case Some((2, 10)) =>
-        Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
+        Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.patch))
     }
   }
 )
