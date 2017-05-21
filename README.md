@@ -15,9 +15,9 @@ To use the latest version, include the following in your `build.sbt`:
 
 ```scala
 libraryDependencies ++= Seq(
-  "org.typelevel" %% "shapeless-scalacheck" % "0.4",
-  "org.typelevel" %% "shapeless-spire" % "0.4",
-  "org.typelevel" %% "shapeless-scalaz" % "0.4"
+  "org.typelevel" %% "shapeless-scalacheck" % "0.6.1",
+  "org.typelevel" %% "shapeless-spire" % "0.6.1",
+  "org.typelevel" %% "shapeless-scalaz" % "0.6.1"
 )
 ```
 
@@ -25,77 +25,11 @@ libraryDependencies ++= Seq(
 What does this library do?
 --------------------------
 
-`shapeless-contrib` aims to provide smooth interoperability between [Shapeless](https://github.com/milessabin/shapeless), [Scalaz](https://github.com/scalaz/scalaz) and [Spire](https://github.com/non/spire). The most prominent feature is automatic derivation of type class instances for case classes, but there is more. If you've got a cool idea for more stuff, please open an issue.
+`shapeless-contrib` aims to provide smooth interoperability between [Shapeless](https://github.com/milessabin/shapeless), and [Spire](https://github.com/non/spire). The most prominent feature is automatic derivation of type class instances for case classes, but there is more. If you've got a cool idea for more stuff, please open an issue.
 
 
 Examples
 --------
-
-### Scalaz + Shapeless = Profit
-
-_Note:_ The current 0.3.x series depends on shapeless 2.0.0.
-
-The combination of these two libraries allows for some nifty utility functions related to `scalaz.Applicative`:
-
-* lifting arbitrary functions (i.e. a generalized `liftA1`, `liftA2`, ...)
-* sequencing and traversing an `HList` (just like sequencing and traversing a `List`)
-
-```scala
-import shapeless._
-import shapeless.contrib.scalaz._
-
-import scalaz.Applicative
-import scalaz.std.option._
-
-// define a function with arbitrarily many parameters
-def foo(x: Int, y: String, z: Float) = s"$x - $y - $z"
-
-// lift it into `Option`
-val lifted = Applicative[Option].liftA(foo _)
-
-// resulting type: `(Option[Int], Option[String], Option[Float]) => Option[String]`
-
-
-// define an `HList` consisting of `Option`s
-val in = Option(1) :: Option("foo") :: HNil
-
-val sequenced = sequence(in)
-
-// resulting type: `Option[Int :: String :: HNil]`
-
-// works for `Validation`, too:
-import scalaz._
-import scalaz.std.string._
-
-val v1: Validation[String, Int] = Success(3)
-val v2: Validation[String, Float] = Failure("foo")
-sequence(v1 :: v2 :: HNil)
-
-// resulting type: `Validation[String, Int :: Float :: HNil]`
-```
-
-Traversing works the same way, but you will also have to specify a `shapeless.Poly` which maps over the `HList` first.
-
-In addition to that, it also provides a conversion between their lens types:
-
-```scala
-import shapeless._
-import shapeless.contrib.scalaz._
-
-case class TwoElem(n: Int, x: String)
-
-// Generate a `shapeless.Lens`
-val sLens = lens[TwoElem] >> 'n
-
-// Convert it to a `scalaz.Lens`
-val zsLens = sLens.asScalaz
-
-// The other way round:
-import scalaz.Lens
-
-val zLens = Lens.lensId[Int]
-val szLens = zLens.asShapeless
-```
 
 ### Derive type classes
 
