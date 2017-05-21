@@ -29,10 +29,8 @@ addCommandAlias("releaseAll", ";root;release skip-tests")
 
 val shapelessVersion = "2.3.2"
 val scalacheckVersion = "1.13.5"
-val scalazVersion = "7.2.12"
 val spireVersion = "0.13.0"
 val scalatestVersion = "3.0.1"
-val specs2Version = "3.6.6-scalaz-7.2.0"
 
 lazy val commonSettings = Seq(
   scalacOptions := Seq(
