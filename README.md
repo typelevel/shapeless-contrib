@@ -9,7 +9,7 @@ Interoperability libraries for Shapeless
 Usage
 -----
 
-This library is currently available for Scala 2.10 and 2.11.
+This library is currently available for Scala 2.10, 2.11, and 2.12.
 
 To use the latest version, include the following in your `build.sbt`:
 
